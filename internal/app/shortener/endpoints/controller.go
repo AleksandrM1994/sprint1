@@ -13,14 +13,13 @@ type Controller struct {
 
 func NewController(mux *http.ServeMux, service service.Service) *Controller {
 	controller := &Controller{mux: mux, service: service}
-	controller.InitHandlers(mux)
+	controller.InitHandlers()
 	return controller
 }
 
-func (c *Controller) InitHandlers(mux *http.ServeMux) {
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		c.UrlWorkerHandlerHandler(w, r)
-	})
+func (c *Controller) InitHandlers() {
+	c.mux.HandleFunc("/", c.SaveURLHandler)
+	c.mux.HandleFunc("/url/", c.GetOriginalURLHandler)
 }
 
 func (c *Controller) GetServeMux() *http.ServeMux {
