@@ -5,14 +5,14 @@ import (
 
 	"github.com/sprint1/internal/app/shortener/endpoints"
 	"github.com/sprint1/internal/app/shortener/service"
+
+	"github.com/gorilla/mux"
 )
 
-const defaultURL = "write original url, its default"
-
 func main() {
-	serviceImpl := service.NewService(defaultURL)
-	mux := http.NewServeMux()
-	controller := endpoints.NewController(mux, serviceImpl)
+	serviceImpl := service.NewService()
+	router := mux.NewRouter()
+	controller := endpoints.NewController(router, serviceImpl)
 	err := http.ListenAndServe(":8080", controller.GetServeMux())
 	if err != nil {
 		panic(err)

@@ -1,9 +1,10 @@
 package service
 
 func (s *ServiceImpl) SaveURL(url string) string {
-	s.originalURL = url
 	if len(url) > 0 {
-		return getShortURL(url)
+		shortUrl := getShortURL(url)
+		s.OriginalURLsMap[shortUrl] = url
+		return shortUrl
 	}
 	return ""
 }

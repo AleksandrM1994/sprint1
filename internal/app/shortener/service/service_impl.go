@@ -1,9 +1,9 @@
 package service
 
 type ServiceImpl struct {
-	originalURL string
+	OriginalURLsMap map[string]string
 }
 
-func NewService(originalURL string) *ServiceImpl {
-	return &ServiceImpl{originalURL: originalURL}
+func NewService() *ServiceImpl {
+	return &ServiceImpl{OriginalURLsMap: make(map[string]string)}
 }

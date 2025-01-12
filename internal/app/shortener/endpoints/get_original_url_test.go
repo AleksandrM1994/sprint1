@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/sprint1/internal/app/shortener/service"
@@ -31,18 +32,18 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			name: "Test Get Original URL successfully",
 			request: Request{
 				method: http.MethodGet,
-				url:    "http://localhost:8080/url/tes",
+				url:    "http://localhost:8080/practicum.yandex.ru",
 			},
 			expected: Expected{
 				code:     http.StatusTemporaryRedirect,
-				location: `test`,
+				location: `https://practicum.yandex.ru/`,
 			},
 		},
 		{
 			name: "Test Get Original URL not find original url",
 			request: Request{
 				method: http.MethodGet,
-				url:    "http://localhost:8080/url/123",
+				url:    "http://localhost:8080/123",
 			},
 			expected: Expected{
 				code:     http.StatusBadRequest,
@@ -56,9 +57,10 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			mux := http.NewServeMux()
-			serviceImpl := service.NewService("test")
-			controller := NewController(mux, serviceImpl)
+			router := mux.NewRouter()
+			serviceImpl := service.NewService()
+			serviceImpl.OriginalURLsMap = map[string]string{"practicum.yandex.ru": "practicum.yandex.ru/"}
+			controller := NewController(router, serviceImpl)
 			controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()

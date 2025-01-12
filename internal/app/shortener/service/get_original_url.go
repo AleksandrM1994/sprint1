@@ -1,8 +1,8 @@
 package service
 
-func (s *ServiceImpl) GetOriginalURL(url string) string {
-	if getShortURL(s.originalURL) == url {
-		return s.originalURL
+func (s *ServiceImpl) GetOriginalURL(shortUrl string) string {
+	if originalURL, ok := s.OriginalURLsMap[shortUrl]; ok {
+		return originalURL
 	}
 	return ""
 }
