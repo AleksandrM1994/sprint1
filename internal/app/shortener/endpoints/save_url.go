@@ -13,10 +13,13 @@ func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) 
 		}
 
 		url := string(request)
+		if url == "" {
+			res.WriteHeader(http.StatusBadRequest)
+		}
 		shortUrl := c.service.SaveURL(url)
 		res.WriteHeader(http.StatusCreated)
-		res.Header().Set("Content-Type", "text/plain")
-		_, writeErr := res.Write([]byte("http://localhost:8080/" + shortUrl))
+		res.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		_, writeErr := res.Write([]byte(shortUrl))
 		if writeErr != nil {
 			res.WriteHeader(http.StatusInternalServerError)
 		}
