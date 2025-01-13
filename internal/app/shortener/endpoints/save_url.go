@@ -19,7 +19,7 @@ func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) 
 		shortUrl := c.service.SaveURL(url)
 		res.WriteHeader(http.StatusCreated)
 		res.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		_, writeErr := res.Write([]byte(shortUrl))
+		_, writeErr := res.Write([]byte(c.cfg.BaseShortURL + "/" + shortUrl))
 		if writeErr != nil {
 			res.WriteHeader(http.StatusInternalServerError)
 		}
