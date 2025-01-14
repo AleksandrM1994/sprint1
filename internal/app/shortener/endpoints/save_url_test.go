@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"github.com/sprint1/config"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -64,9 +65,10 @@ func Test_SaveUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
+			cfg := config.Init()
 			router := mux.NewRouter()
 			serviceImpl := service.NewService()
-			controller := NewController(router, serviceImpl)
+			controller := NewController(router, serviceImpl, cfg)
 			controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()

@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"github.com/sprint1/config"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -57,10 +58,11 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
+			cfg := config.Init()
 			router := mux.NewRouter()
 			serviceImpl := service.NewService()
 			serviceImpl.OriginalURLsMap = map[string]string{"practicum.yandex.ru": "practicum.yandex.ru/"}
-			controller := NewController(router, serviceImpl)
+			controller := NewController(router, serviceImpl, cfg)
 			controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
