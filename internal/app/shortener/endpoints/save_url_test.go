@@ -1,14 +1,12 @@
 package endpoints
 
 import (
-	"github.com/sprint1/config"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -37,11 +35,11 @@ func Test_SaveUrlHandler(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/",
-				body:   "http://test",
+				body:   "https://jsonformatter.org",
 			},
 			expected: Expected{
 				code:        http.StatusCreated,
-				response:    `http://tes`,
+				response:    "http://localhost:8080/aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
 				contentType: "",
 			},
 		},
@@ -65,10 +63,9 @@ func Test_SaveUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			cfg := config.Init()
-			router := mux.NewRouter()
+			mux := http.NewServeMux()
 			serviceImpl := service.NewService()
-			controller := NewController(router, serviceImpl, cfg)
+			controller := NewController(mux, serviceImpl)
 			controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()

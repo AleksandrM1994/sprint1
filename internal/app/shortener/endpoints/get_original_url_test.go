@@ -1,13 +1,11 @@
 package endpoints
 
 import (
-	"github.com/sprint1/config"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/sprint1/internal/app/shortener/service"
@@ -33,11 +31,11 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			name: "Test Get Original URL successfully",
 			request: Request{
 				method: http.MethodGet,
-				url:    "http://localhost:8080/practicum.yandex.ru",
+				url:    "http://localhost:8080/aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
 			},
 			expected: Expected{
 				code:     http.StatusTemporaryRedirect,
-				location: `https://practicum.yandex.ru/`,
+				location: "https://jsonformatter.org",
 			},
 		},
 		{
@@ -58,11 +56,10 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			cfg := config.Init()
-			router := mux.NewRouter()
+			mux := http.NewServeMux()
 			serviceImpl := service.NewService()
-			serviceImpl.OriginalURLsMap = map[string]string{"practicum.yandex.ru": "practicum.yandex.ru/"}
-			controller := NewController(router, serviceImpl, cfg)
+			serviceImpl.OriginalURLsMap = map[string]string{"aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==": "https://jsonformatter.org"}
+			controller := NewController(mux, serviceImpl)
 			controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
