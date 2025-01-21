@@ -35,11 +35,11 @@ func Test_SaveUrlHandler(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/",
-				body:   "http://test",
+				body:   "https://jsonformatter.org",
 			},
 			expected: Expected{
 				code:        http.StatusCreated,
-				response:    `http://tes`,
+				response:    "http://localhost:8080/aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
 				contentType: "",
 			},
 		},
@@ -64,7 +64,7 @@ func Test_SaveUrlHandler(t *testing.T) {
 			w := httptest.NewRecorder()
 
 			mux := http.NewServeMux()
-			serviceImpl := service.NewService("write original url, its default")
+			serviceImpl := service.NewService()
 			controller := NewController(mux, serviceImpl)
 			controller.GetServeMux().ServeHTTP(w, r)
 

@@ -31,18 +31,18 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			name: "Test Get Original URL successfully",
 			request: Request{
 				method: http.MethodGet,
-				url:    "http://localhost:8080/url/tes",
+				url:    "http://localhost:8080/aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
 			},
 			expected: Expected{
 				code:     http.StatusTemporaryRedirect,
-				location: `test`,
+				location: "https://jsonformatter.org",
 			},
 		},
 		{
 			name: "Test Get Original URL not find original url",
 			request: Request{
 				method: http.MethodGet,
-				url:    "http://localhost:8080/url/123",
+				url:    "http://localhost:8080/123",
 			},
 			expected: Expected{
 				code:     http.StatusBadRequest,
@@ -57,7 +57,8 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			w := httptest.NewRecorder()
 
 			mux := http.NewServeMux()
-			serviceImpl := service.NewService("test")
+			serviceImpl := service.NewService()
+			serviceImpl.OriginalURLsMap = map[string]string{"aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==": "https://jsonformatter.org"}
 			controller := NewController(mux, serviceImpl)
 			controller.GetServeMux().ServeHTTP(w, r)
 
