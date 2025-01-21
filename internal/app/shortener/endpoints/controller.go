@@ -19,7 +19,7 @@ func NewController(mux *http.ServeMux, service service.Service) *Controller {
 
 func (c *Controller) InitHandlers() {
 	c.mux.HandleFunc("/", c.SaveURLHandler)
-	c.mux.HandleFunc("/url/", c.GetOriginalURLHandler)
+	c.mux.HandleFunc("/{id}", c.GetOriginalURLHandler)
 }
 
 func (c *Controller) GetServeMux() *http.ServeMux {

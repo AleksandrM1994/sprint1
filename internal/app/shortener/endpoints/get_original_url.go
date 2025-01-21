@@ -6,7 +6,7 @@ import (
 
 func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodGet {
-		id := req.URL.Path[len("/url/"):]
+		id := req.URL.Path[len("/"):]
 
 		originalURL := c.service.GetOriginalURL(id)
 		if originalURL != "" {

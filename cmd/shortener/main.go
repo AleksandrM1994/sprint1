@@ -7,10 +7,8 @@ import (
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
-const defaultURL = "write original url, its default"
-
 func main() {
-	serviceImpl := service.NewService(defaultURL)
+	serviceImpl := service.NewService()
 	mux := http.NewServeMux()
 	controller := endpoints.NewController(mux, serviceImpl)
 	err := http.ListenAndServe(":8080", controller.GetServeMux())
