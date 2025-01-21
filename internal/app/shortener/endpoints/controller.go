@@ -1,29 +1,27 @@
 package endpoints
 
 import (
-	"github.com/sprint1/config"
-	"github.com/sprint1/internal/app/shortener/service"
+	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/sprint1/internal/app/shortener/service"
 )
 
 type Controller struct {
-	router  *mux.Router
+	mux     *http.ServeMux
 	service service.Service
-	cfg     config.Config
 }
 
-func NewController(router *mux.Router, service service.Service, cfg config.Config) *Controller {
-	controller := &Controller{router: router, service: service, cfg: cfg}
+func NewController(mux *http.ServeMux, service service.Service) *Controller {
+	controller := &Controller{mux: mux, service: service}
 	controller.InitHandlers()
 	return controller
 }
 
 func (c *Controller) InitHandlers() {
-	c.router.HandleFunc("/", c.SaveURLHandler).Methods("POST")
-	c.router.HandleFunc("/{id}", c.GetOriginalURLHandler).Methods("GET")
+	c.mux.HandleFunc("/", c.SaveURLHandler)
+	c.mux.HandleFunc("/{id}", c.GetOriginalURLHandler)
 }
 
-func (c *Controller) GetServeMux() *mux.Router {
-	return c.router
+func (c *Controller) GetServeMux() *http.ServeMux {
+	return c.mux
 }
