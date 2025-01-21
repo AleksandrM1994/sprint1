@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -63,9 +64,9 @@ func Test_SaveUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			mux := http.NewServeMux()
+			router := mux.NewRouter()
 			serviceImpl := service.NewService()
-			controller := NewController(mux, serviceImpl)
+			controller := NewController(router, serviceImpl)
 			controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
