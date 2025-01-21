@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/sprint1/internal/app/shortener/service"
@@ -56,10 +57,10 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			mux := http.NewServeMux()
+			router := mux.NewRouter()
 			serviceImpl := service.NewService()
 			serviceImpl.OriginalURLsMap = map[string]string{"aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==": "https://jsonformatter.org"}
-			controller := NewController(mux, serviceImpl)
+			controller := NewController(router, serviceImpl)
 			controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
