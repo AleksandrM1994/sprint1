@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"go.uber.org/zap"
+
 	"github.com/sprint1/config"
 	"github.com/sprint1/internal/app/shortener/service"
 
@@ -11,10 +13,11 @@ type Controller struct {
 	router  *mux.Router
 	service service.Service
 	cfg     config.Config
+	lg      *zap.SugaredLogger
 }
 
-func NewController(router *mux.Router, service service.Service, cfg config.Config) *Controller {
-	controller := &Controller{router: router, service: service, cfg: cfg}
+func NewController(router *mux.Router, service service.Service, cfg config.Config, lg *zap.SugaredLogger) *Controller {
+	controller := &Controller{router: router, service: service, cfg: cfg, lg: lg}
 	controller.InitHandlers()
 	return controller
 }
