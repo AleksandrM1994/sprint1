@@ -13,16 +13,17 @@ func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) 
 		}
 
 		url := string(request)
-		if url == "" {
-			res.WriteHeader(http.StatusBadRequest)
-		}
-		shortUrl := c.service.SaveURL(url)
-		if shortUrl != "" {
-			res.WriteHeader(http.StatusCreated)
-			res.Header().Set("Content-Type", "text/plain")
-			_, writeErr := res.Write([]byte(c.cfg.BaseShortURL + "/" + shortUrl))
-			if writeErr != nil {
-				res.WriteHeader(http.StatusInternalServerError)
+		if url != "" {
+			shortUrl := c.service.SaveURL(url)
+			if shortUrl != "" {
+				res.WriteHeader(http.StatusCreated)
+				res.Header().Set("Content-Type", "text/plain")
+				_, writeErr := res.Write([]byte(c.cfg.BaseShortURL + "/" + shortUrl))
+				if writeErr != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+				}
+			} else {
+				res.WriteHeader(http.StatusBadRequest)
 			}
 		} else {
 			res.WriteHeader(http.StatusBadRequest)

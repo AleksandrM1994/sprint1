@@ -1,6 +1,9 @@
 package config
 
-import "flag"
+import (
+	"flag"
+	"os"
+)
 
 type Config struct {
 	HTTPAddress  string
@@ -14,6 +17,14 @@ func Init() Config {
 	flag.StringVar(&cfg.BaseShortURL, "b", "http://localhost:8080", "base short url")
 
 	flag.Parse()
+
+	if httpAddress := os.Getenv("SERVER_ADDRESS"); httpAddress != "" {
+		cfg.HTTPAddress = httpAddress
+	}
+
+	if baseShortURL := os.Getenv("BASE_URL"); baseShortURL != "" {
+		cfg.BaseShortURL = baseShortURL
+	}
 
 	return cfg
 }

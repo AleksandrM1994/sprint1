@@ -37,7 +37,7 @@ func (suite *EndpointsTestSuite) Test_SaveUrlHandler(t *testing.T) {
 			},
 			expected: Expected{
 				code:        http.StatusCreated,
-				response:    "http://localhost:8080/aHR0cHM6Ly9wcmFjdGljdW0ueWFuZGV4LnJ1",
+				response:    "http://localhost:8080/8a9923515b44",
 				contentType: "",
 			},
 		},
