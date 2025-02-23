@@ -11,9 +11,9 @@ func (s *ServiceImpl) SaveURL(url string) string {
 		shortURL = hashURL[:fifthLength+count]
 
 		// Проверяем, существует ли уже этот короткий URL
-		if _, ok := s.OriginalURLsMap[shortURL]; !ok {
+		if _, ok := s.URLStorage[shortURL]; !ok {
 			// Если нет, сохраняем его и выходим из цикла
-			s.OriginalURLsMap[shortURL] = url
+			s.URLStorage[shortURL] = url
 			return shortURL
 		}
 

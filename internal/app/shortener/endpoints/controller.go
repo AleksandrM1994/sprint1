@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"net/http"
+
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
@@ -14,6 +16,7 @@ type Controller struct {
 	service service.Service
 	cfg     config.Config
 	lg      *zap.SugaredLogger
+	http.Handler
 }
 
 func NewController(router *mux.Router, service service.Service, cfg config.Config, lg *zap.SugaredLogger) *Controller {
