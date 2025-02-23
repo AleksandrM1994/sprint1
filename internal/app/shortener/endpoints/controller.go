@@ -28,6 +28,7 @@ func NewController(router *mux.Router, service service.Service, cfg config.Confi
 func (c *Controller) InitHandlers() {
 	c.router.HandleFunc("/", c.SaveURLHandler).Methods("POST")
 	c.router.HandleFunc("/{id}", c.GetOriginalURLHandler).Methods("GET")
+	c.router.HandleFunc("/api/shorten", c.GetShortenURLHandler).Methods("POST")
 }
 
 func (c *Controller) GetServeMux() *mux.Router {

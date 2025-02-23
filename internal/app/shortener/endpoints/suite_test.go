@@ -29,4 +29,5 @@ func TestEndpointSuite(t *testing.T) {
 
 	suite.Test_SaveUrlHandler(t)
 	suite.Test_GetOriginalUrlHandler(t)
+	suite.Test_GetShortenURLHandler(t)
 }
