@@ -1,21 +1,17 @@
 package endpoints
 
 import (
-	"github.com/sprint1/config"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/sprint1/internal/app/shortener/service"
 )
 
-func Test_SaveUrlHandler(t *testing.T) {
+func (suite *EndpointsTestSuite) Test_SaveUrlHandler(t *testing.T) {
 	type Request struct {
 		method string
 		url    string
@@ -37,11 +33,11 @@ func Test_SaveUrlHandler(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/",
-				body:   "http://test",
+				body:   "https://practicum.yandex.ru",
 			},
 			expected: Expected{
 				code:        http.StatusCreated,
-				response:    `http://tes`,
+				response:    "http://localhost:8080/8a9923515b44",
 				contentType: "",
 			},
 		},
@@ -59,17 +55,12 @@ func Test_SaveUrlHandler(t *testing.T) {
 			},
 		},
 	}
-
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			cfg := config.Init()
-			router := mux.NewRouter()
-			serviceImpl := service.NewService()
-			controller := NewController(router, serviceImpl, cfg)
-			controller.GetServeMux().ServeHTTP(w, r)
+			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
 

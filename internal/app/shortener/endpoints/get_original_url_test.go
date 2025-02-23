@@ -1,19 +1,15 @@
 package endpoints
 
 import (
-	"github.com/sprint1/config"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/sprint1/internal/app/shortener/service"
 )
 
-func Test_GetOriginalUrlHandler(t *testing.T) {
+func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 	type Request struct {
 		method string
 		url    string
@@ -33,11 +29,11 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			name: "Test Get Original URL successfully",
 			request: Request{
 				method: http.MethodGet,
-				url:    "http://localhost:8080/practicum.yandex.ru",
+				url:    "http://localhost:8080/aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
 			},
 			expected: Expected{
 				code:     http.StatusTemporaryRedirect,
-				location: `https://practicum.yandex.ru/`,
+				location: "https://jsonformatter.org",
 			},
 		},
 		{
@@ -52,18 +48,12 @@ func Test_GetOriginalUrlHandler(t *testing.T) {
 			},
 		},
 	}
-
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			cfg := config.Init()
-			router := mux.NewRouter()
-			serviceImpl := service.NewService()
-			serviceImpl.OriginalURLsMap = map[string]string{"practicum.yandex.ru": "practicum.yandex.ru/"}
-			controller := NewController(router, serviceImpl, cfg)
-			controller.GetServeMux().ServeHTTP(w, r)
+			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
 

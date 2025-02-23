@@ -18,12 +18,12 @@ func Init() Config {
 
 	flag.Parse()
 
-	if HTTPAddress := os.Getenv("SERVER_ADDRESS"); HTTPAddress != "" {
-		cfg.HTTPAddress = HTTPAddress
+	if httpAddress := os.Getenv("SERVER_ADDRESS"); httpAddress != "" {
+		cfg.HTTPAddress = httpAddress
 	}
 
-	if BaseShortURL := os.Getenv("BASE_URL"); BaseShortURL != "" {
-		cfg.BaseShortURL = BaseShortURL
+	if baseShortURL := os.Getenv("BASE_URL"); baseShortURL != "" {
+		cfg.BaseShortURL = baseShortURL
 	}
 
 	return cfg
