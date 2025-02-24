@@ -1,4 +1,4 @@
-package endpoints
+package middleware
 
 import (
 	"net/http"
@@ -7,20 +7,18 @@ import (
 	"go.uber.org/zap"
 )
 
-// ResponseWriterWrapper оборачивает http.ResponseWriter
 type ResponseWriterWrapper struct {
 	http.ResponseWriter
 	statusCode int
 	size       int
 }
 
-// WriteHeader перехватывает вызов метода WriteHeader
 func (rw *ResponseWriterWrapper) WriteHeader(code int) {
 	rw.statusCode = code
 	rw.ResponseWriter.WriteHeader(code)
 }
 
-func WithLogging(next http.Handler, lg *zap.SugaredLogger) http.Handler {
+func Logging(lg *zap.SugaredLogger, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 

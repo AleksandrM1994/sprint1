@@ -26,8 +26,7 @@ func main() {
 	serviceImpl := service.NewService(lg)
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
-	loggedRouter := endpoints.WithLogging(controller.GetServeMux(), lg)
-	err := http.ListenAndServe(cfg.HTTPAddress, loggedRouter)
+	err := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
 	if err != nil {
 		panic(err)
 	}
