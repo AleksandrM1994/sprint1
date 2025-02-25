@@ -1,6 +1,6 @@
 module github.com/sprint1
 
-go 1.22.10
+go 1.22.0
 
 require (
 	github.com/gorilla/mux v1.8.1

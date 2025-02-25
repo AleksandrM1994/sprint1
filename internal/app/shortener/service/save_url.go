@@ -14,7 +14,7 @@ func (s *ServiceImpl) SaveURL(url string) string {
 		if _, ok := s.URLStorage[shortURL]; !ok {
 			// Если нет, сохраняем его и выходим из цикла
 			s.URLStorage[shortURL] = url
-			return shortURL
+			break
 		}
 
 		// Увеличиваем count для следующей итерации
@@ -23,7 +23,19 @@ func (s *ServiceImpl) SaveURL(url string) string {
 		// Проверяем, не достигли ли мы максимальной длины
 		if fifthLength+count > len(hashURL) {
 			// Если да, возвращаем пустую строку
-			return ""
+			shortURL = ""
+			break
 		}
 	}
+
+	err := s.InsertURLInFile(&URLInfo{
+		UUID:        len(s.URLStorage),
+		ShortURL:    shortURL,
+		OriginalURL: url,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	return shortURL
 }
