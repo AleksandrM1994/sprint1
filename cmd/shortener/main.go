@@ -23,7 +23,7 @@ func main() {
 
 	cfg := config.Init()
 
-	serviceImpl := service.NewService(lg)
+	serviceImpl := service.NewService(lg, cfg)
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
 	err := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())

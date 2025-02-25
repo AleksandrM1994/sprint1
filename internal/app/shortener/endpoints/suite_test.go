@@ -21,9 +21,9 @@ func TestEndpointSuite(t *testing.T) {
 		panic("cannot initialize zap")
 	}
 	lg := logger.Sugar()
-	serviceImpl := service.NewService(lg)
-	serviceImpl.URLStorage = map[string]string{"aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==": "https://jsonformatter.org"}
 	cfg := config.Init()
+	serviceImpl := service.NewService(lg, cfg)
+	serviceImpl.URLStorage = map[string]string{"aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==": "https://jsonformatter.org"}
 	controller := NewController(router, serviceImpl, cfg, lg)
 	suite := &EndpointsTestSuite{controller: controller}
 
