@@ -10,7 +10,7 @@ func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Re
 
 		originalURL := c.service.GetOriginalURL(id)
 		if originalURL != "" {
-			res.Header().Add("Location", "https://"+originalURL)
+			res.Header().Add("Location", originalURL)
 			res.WriteHeader(http.StatusTemporaryRedirect)
 		} else {
 			res.WriteHeader(http.StatusBadRequest)
