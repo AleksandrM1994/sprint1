@@ -6,7 +6,6 @@ import (
 
 func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Request) {
 	id := req.URL.Path[len("/"):]
-
 	originalURL := c.service.GetOriginalURL(id)
 	if originalURL != "" {
 		res.Header().Add("Location", originalURL)
