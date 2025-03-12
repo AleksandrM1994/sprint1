@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"os"
 )
 
@@ -9,6 +10,7 @@ type Config struct {
 	HTTPAddress     string
 	BaseShortURL    string
 	FileStoragePath string
+	DNS             string
 }
 
 var cfg Config
@@ -17,6 +19,8 @@ func Init() Config {
 	flag.StringVar(&cfg.HTTPAddress, "a", "localhost:8080", "HTTP address")
 	flag.StringVar(&cfg.BaseShortURL, "b", "http://localhost:8080", "base short url")
 	flag.StringVar(&cfg.FileStoragePath, "f", "./urls.txt", "file path")
+
+	flag.StringVar(&cfg.DNS, "d", "", "db connection")
 
 	flag.Parse()
 
@@ -32,5 +36,13 @@ func Init() Config {
 		cfg.FileStoragePath = fileStoragePath
 	}
 
+	if dns := os.Getenv("DNS"); dns != "" {
+		cfg.DNS = dns
+	}
+
 	return cfg
+}
+
+func GetDNS() string {
+	return fmt.Sprintf("user=test password=test dbname=test host=localhost port=5432 sslmode=disable")
 }
