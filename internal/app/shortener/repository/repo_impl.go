@@ -1,12 +1,16 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 
+	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
+	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 	"github.com/sprint1/internal/app/shortener/helpers"
 )
 
@@ -70,6 +74,15 @@ func (r *RepoImpl) CreateURL(shortURL string, originalURL string) error {
 
 	_, errNamedExec := r.db.NamedExec(script, &URL{ShortURL: shortURL, OriginalURL: originalURL})
 	if errNamedExec != nil {
+		if pgErr, ok := errNamedExec.(*pq.Error); ok {
+			code := pgErr.Code
+			switch code {
+			case pgerrcode.UniqueViolation:
+				return custom_errs.ErrUniqueViolation
+			default:
+				return fmt.Errorf("db.NamedExec: %w", errNamedExec)
+			}
+		}
 		return fmt.Errorf("db.NamedExec: %w", errNamedExec)
 	}
 
@@ -85,8 +98,10 @@ func (r *RepoImpl) GetURLByShortURL(shortURL string) (*URL, error) {
 	url := &URL{}
 	errGet := r.db.Get(url, script, shortURL)
 	if errGet != nil {
+		if errGet == sql.ErrNoRows {
+			return nil, custom_errs.ErrNotFound
+		}
 		return nil, fmt.Errorf("db.Get: %w", errGet)
-
 	}
 	return url, nil
 }

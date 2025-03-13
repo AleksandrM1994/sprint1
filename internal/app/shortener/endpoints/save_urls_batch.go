@@ -23,13 +23,15 @@ type URLInBatch struct {
 func (c *Controller) SaveURLsBatch(res http.ResponseWriter, req *http.Request) {
 	request, err := io.ReadAll(req.Body)
 	if err != nil {
-		panic(err)
+		res.WriteHeader(http.StatusInternalServerError)
+		http.Error(res, err.Error(), http.StatusInternalServerError)
 	}
 
 	saveURLsBatchRequest := &SaveURLsBatchRequest{}
 	errUnmarshal := json.Unmarshal(request, saveURLsBatchRequest)
 	if errUnmarshal != nil {
-		panic(errUnmarshal)
+		res.WriteHeader(http.StatusInternalServerError)
+		http.Error(res, errUnmarshal.Error(), http.StatusInternalServerError)
 	}
 
 	urls := make([]URLInBatch, 0, len(saveURLsBatchRequest.URLs))
@@ -37,6 +39,7 @@ func (c *Controller) SaveURLsBatch(res http.ResponseWriter, req *http.Request) {
 		for _, url := range saveURLsBatchRequest.URLs {
 			shortUrl, errSaveURL := c.service.SaveURL(url.OriginalURL)
 			if errSaveURL != nil {
+				res.WriteHeader(http.StatusInternalServerError)
 				http.Error(res, errSaveURL.Error(), http.StatusInternalServerError)
 			}
 			if shortUrl != "" {
@@ -54,11 +57,13 @@ func (c *Controller) SaveURLsBatch(res http.ResponseWriter, req *http.Request) {
 		}
 		body, errMarshal := json.Marshal(saveURLsBatchResponse)
 		if errMarshal != nil {
-			panic(errMarshal)
+			res.WriteHeader(http.StatusInternalServerError)
+			http.Error(res, errMarshal.Error(), http.StatusInternalServerError)
 		}
 		_, errWrite := res.Write(body)
 		if errWrite != nil {
-			panic(errWrite)
+			res.WriteHeader(http.StatusInternalServerError)
+			http.Error(res, errWrite.Error(), http.StatusInternalServerError)
 		}
 	} else {
 		res.WriteHeader(http.StatusBadRequest)
