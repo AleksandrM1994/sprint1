@@ -1,41 +1,46 @@
 package service
 
-func (s *ServiceImpl) SaveURL(url string) string {
+import (
+	"errors"
+	"fmt"
+
+	custom_errs "github.com/sprint1/internal/app/shortener/errors"
+)
+
+func (s *ServiceImpl) SaveURL(url string) (string, error) {
 	var shortURL string
 	count := 0
 	hashURL := HashString(url)
 	fifthLength := len(hashURL) / 5
 
-	for {
-		// Обрезаем hashURL до нужной длины
-		shortURL = hashURL[:fifthLength+count]
+	// Обрезаем hashURL до нужной длины
+	shortURL = hashURL[:fifthLength+count]
 
-		// Проверяем, существует ли уже этот короткий URL
-		if _, ok := s.URLStorage[shortURL]; !ok {
-			// Если нет, сохраняем его и выходим из цикла
-			s.URLStorage[shortURL] = url
-			break
+	errCreateURL := s.repo.CreateURL(shortURL, url)
+	if errCreateURL != nil {
+		if errors.Is(errCreateURL, custom_errs.ErrUniqueViolation) {
+			urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)
+			if errGetURLByShortURL != nil {
+				return "", fmt.Errorf("repo.GetURLByShortURL: %v", errGetURLByShortURL)
+			}
+			return urlDB.ShortURL, errCreateURL
 		}
-
-		// Увеличиваем count для следующей итерации
-		count++
-
-		// Проверяем, не достигли ли мы максимальной длины
-		if fifthLength+count > len(hashURL) {
-			// Если да, возвращаем пустую строку
-			shortURL = ""
-			break
-		}
+		return "", fmt.Errorf("repo.CreateURL:%w", errCreateURL)
 	}
 
-	err := s.InsertURLInFile(&URLInfo{
-		UUID:        len(s.URLStorage),
-		ShortURL:    shortURL,
-		OriginalURL: url,
+	urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)
+	if errGetURLByShortURL != nil {
+		return "", fmt.Errorf("repo.GetURLByShortURL: %v", errGetURLByShortURL)
+	}
+
+	errInsertURLInFile := s.InsertURLInFile(&URLInfo{
+		UUID:        urlDB.Id,
+		ShortURL:    urlDB.ShortURL,
+		OriginalURL: urlDB.OriginalURL,
 	})
-	if err != nil {
-		panic(err)
+	if errInsertURLInFile != nil {
+		return "", fmt.Errorf("InsertURLInFile:%w", errInsertURLInFile)
 	}
 
-	return shortURL
+	return shortURL, nil
 }

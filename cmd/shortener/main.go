@@ -7,9 +7,11 @@ import (
 
 	"github.com/sprint1/config"
 	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/repository"
 	"github.com/sprint1/internal/app/shortener/service"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -23,7 +25,13 @@ func main() {
 
 	cfg := config.Init()
 
-	serviceImpl := service.NewService(lg, cfg)
+	cfg.DNS = config.GetDNS()
+	repo, errNewRepoImpl := repository.NewRepoImpl(lg, cfg)
+	if errNewRepoImpl != nil {
+		panic(errNewRepoImpl)
+	}
+
+	serviceImpl := service.NewService(lg, cfg, repo)
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
 	err := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
