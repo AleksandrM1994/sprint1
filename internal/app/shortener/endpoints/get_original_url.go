@@ -6,7 +6,10 @@ import (
 
 func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Request) {
 	id := req.URL.Path[len("/"):]
-	originalURL := c.service.GetOriginalURL(id)
+	originalURL, err := c.service.GetOriginalURL(id)
+	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+	}
 	if originalURL != "" {
 		res.Header().Add("Location", originalURL)
 		res.WriteHeader(http.StatusTemporaryRedirect)

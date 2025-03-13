@@ -1,6 +1,12 @@
 package service
 
-func (s *ServiceImpl) SaveURL(url string) string {
+import (
+	"database/sql"
+	"errors"
+	"fmt"
+)
+
+func (s *ServiceImpl) SaveURL(url string) (string, error) {
 	var shortURL string
 	count := 0
 	hashURL := HashString(url)
@@ -10,10 +16,18 @@ func (s *ServiceImpl) SaveURL(url string) string {
 		// Обрезаем hashURL до нужной длины
 		shortURL = hashURL[:fifthLength+count]
 
+		urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)
+		if errGetURLByShortURL != nil && !errors.Is(errGetURLByShortURL, sql.ErrNoRows) {
+			return "", fmt.Errorf("repo.GetURLByShortURL: %v", errGetURLByShortURL)
+		}
+
 		// Проверяем, существует ли уже этот короткий URL
-		if _, ok := s.URLStorage[shortURL]; !ok {
+		if urlDB == nil {
 			// Если нет, сохраняем его и выходим из цикла
-			s.URLStorage[shortURL] = url
+			errCreateURL := s.repo.CreateURL(shortURL, url)
+			if errCreateURL != nil {
+				return "", fmt.Errorf("repo.CreateURL:%w", errCreateURL)
+			}
 			break
 		}
 
@@ -28,14 +42,19 @@ func (s *ServiceImpl) SaveURL(url string) string {
 		}
 	}
 
-	err := s.InsertURLInFile(&URLInfo{
-		UUID:        len(s.URLStorage),
-		ShortURL:    shortURL,
-		OriginalURL: url,
-	})
-	if err != nil {
-		panic(err)
+	urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)
+	if errGetURLByShortURL != nil {
+		return "", fmt.Errorf("repo.GetURLByShortURL: %v", errGetURLByShortURL)
 	}
 
-	return shortURL
+	errInsertURLInFile := s.InsertURLInFile(&URLInfo{
+		UUID:        urlDB.Id,
+		ShortURL:    urlDB.ShortURL,
+		OriginalURL: urlDB.OriginalURL,
+	})
+	if errInsertURLInFile != nil {
+		return "", fmt.Errorf("InsertURLInFile:%w", errInsertURLInFile)
+	}
+
+	return shortURL, nil
 }

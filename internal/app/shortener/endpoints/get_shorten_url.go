@@ -27,7 +27,10 @@ func (c *Controller) GetShortenURLHandler(res http.ResponseWriter, req *http.Req
 	}
 
 	if getShortenURLRequest.URL != "" {
-		shortUrl := c.service.SaveURL(getShortenURLRequest.URL)
+		shortUrl, errSaveURL := c.service.SaveURL(getShortenURLRequest.URL)
+		if errSaveURL != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+		}
 		if shortUrl != "" {
 			res.WriteHeader(http.StatusCreated)
 			res.Header().Add("Content-Type", "application/json")

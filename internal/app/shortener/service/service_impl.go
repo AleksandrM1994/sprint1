@@ -15,5 +15,5 @@ type ServiceImpl struct {
 }
 
 func NewService(lg *zap.SugaredLogger, cfg config.Config, repo repository.Repo) *ServiceImpl {
-	return &ServiceImpl{URLStorage: make(map[string]string), lg: lg, cfg: cfg, repo: repo}
+	return &ServiceImpl{lg: lg, cfg: cfg, repo: repo}
 }

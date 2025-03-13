@@ -43,6 +43,8 @@ func (suite *EndpointsTestSuite) Test_PingHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(string(body)))
 			w := httptest.NewRecorder()
 
+			suite.repo.EXPECT().Ping().Return(nil).Times(1)
+
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()

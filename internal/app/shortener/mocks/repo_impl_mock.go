@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	repository "github.com/sprint1/internal/app/shortener/repository"
 )
 
 // MockRepo is a mock of Repo interface.
@@ -31,6 +32,35 @@ func NewMockRepo(ctrl *gomock.Controller) *MockRepo {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRepo) EXPECT() *MockRepoMockRecorder {
 	return m.recorder
+}
+
+// CreateURL mocks base method.
+func (m *MockRepo) CreateURL(shortURL, originalURL string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateURL", shortURL, originalURL)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateURL indicates an expected call of CreateURL.
+func (mr *MockRepoMockRecorder) CreateURL(shortURL, originalURL interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepo)(nil).CreateURL), shortURL, originalURL)
+}
+
+// GetURLByShortURL mocks base method.
+func (m *MockRepo) GetURLByShortURL(shortURL string) (*repository.URL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetURLByShortURL", shortURL)
+	ret0, _ := ret[0].(*repository.URL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetURLByShortURL indicates an expected call of GetURLByShortURL.
+func (mr *MockRepoMockRecorder) GetURLByShortURL(shortURL interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetURLByShortURL", reflect.TypeOf((*MockRepo)(nil).GetURLByShortURL), shortURL)
 }
 
 // Ping mocks base method.

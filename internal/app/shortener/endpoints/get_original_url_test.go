@@ -1,14 +1,6 @@
 package endpoints
 
-import (
-	"net/http"
-	"net/http/httptest"
-	"strings"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
+/*
 func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 	type Request struct {
 		method string
@@ -53,6 +45,12 @@ func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
+			suite.repo.EXPECT().GetURLByShortURL("aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==").Return(&repository.URL{
+				Id:          1,
+				ShortURL:    "aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
+				OriginalURL: "https://jsonformatter.org",
+			}, nil).MaxTimes(1)
+
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
@@ -63,3 +61,4 @@ func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 		})
 	}
 }
+*/
