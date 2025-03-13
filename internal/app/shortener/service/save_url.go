@@ -1,45 +1,36 @@
 package service
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
+
+	custom_errs "github.com/sprint1/internal/app/shortener/errors"
+	"github.com/sprint1/internal/app/shortener/helpers"
 )
 
 func (s *ServiceImpl) SaveURL(url string) (string, error) {
 	var shortURL string
 	count := 0
+
+	url = helpers.RemoveControlCharacters(url)
 	hashURL := HashString(url)
 	fifthLength := len(hashURL) / 5
 
-	for {
-		// Обрезаем hashURL до нужной длины
-		shortURL = hashURL[:fifthLength+count]
+	// Обрезаем hashURL до нужной длины
+	shortURL = hashURL[:fifthLength+count]
 
-		urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)
-		if errGetURLByShortURL != nil && !errors.Is(errGetURLByShortURL, sql.ErrNoRows) {
-			return "", fmt.Errorf("repo.GetURLByShortURL: %v", errGetURLByShortURL)
-		}
+	s.lg.Infow("SaveURL request", "url", url, "shortURL", shortURL)
 
-		// Проверяем, существует ли уже этот короткий URL
-		if urlDB == nil {
-			// Если нет, сохраняем его и выходим из цикла
-			errCreateURL := s.repo.CreateURL(shortURL, url)
-			if errCreateURL != nil {
-				return "", fmt.Errorf("repo.CreateURL:%w", errCreateURL)
+	errCreateURL := s.repo.CreateURL(shortURL, url)
+	if errCreateURL != nil {
+		if errors.Is(errCreateURL, custom_errs.ErrUniqueViolation) {
+			urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)
+			if errGetURLByShortURL != nil {
+				return "", fmt.Errorf("repo.GetURLByShortURL: %v", errGetURLByShortURL)
 			}
-			break
+			return urlDB.ShortURL, errCreateURL
 		}
-
-		// Увеличиваем count для следующей итерации
-		count++
-
-		// Проверяем, не достигли ли мы максимальной длины
-		if fifthLength+count > len(hashURL) {
-			// Если да, возвращаем пустую строку
-			shortURL = ""
-			break
-		}
+		return "", fmt.Errorf("repo.CreateURL:%w", errCreateURL)
 	}
 
 	urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)
@@ -48,7 +39,7 @@ func (s *ServiceImpl) SaveURL(url string) (string, error) {
 	}
 
 	errInsertURLInFile := s.InsertURLInFile(&URLInfo{
-		UUID:        urlDB.Id,
+		UUID:        urlDB.ID,
 		ShortURL:    urlDB.ShortURL,
 		OriginalURL: urlDB.OriginalURL,
 	})

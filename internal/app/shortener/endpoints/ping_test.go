@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -48,6 +49,11 @@ func (suite *EndpointsTestSuite) Test_PingHandler(t *testing.T) {
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
+			defer func() {
+				if err := result.Body.Close(); err != nil {
+					fmt.Println("Body.Close:", err)
+				}
+			}()
 
 			assert.Equal(t, test.expected.code, result.StatusCode, "unexpected status code")
 		})

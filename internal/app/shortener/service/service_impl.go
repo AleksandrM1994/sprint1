@@ -8,10 +8,9 @@ import (
 )
 
 type ServiceImpl struct {
-	URLStorage map[string]string
-	lg         *zap.SugaredLogger
-	cfg        config.Config
-	repo       repository.Repo
+	lg   *zap.SugaredLogger
+	cfg  config.Config
+	repo repository.Repo
 }
 
 func NewService(lg *zap.SugaredLogger, cfg config.Config, repo repository.Repo) *ServiceImpl {

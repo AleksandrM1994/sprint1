@@ -25,17 +25,16 @@ func main() {
 
 	cfg := config.Init()
 
-	cfg.DNS = config.GetDNS()
-	repo, errNewRepoImpl := repository.NewRepoImpl(lg, cfg)
-	if errNewRepoImpl != nil {
-		panic(errNewRepoImpl)
+	repo, errSelectRepo := repository.SelectRepo(lg, cfg)
+	if errSelectRepo != nil {
+		lg.Fatal("repository.SelectRepo:", errSelectRepo)
 	}
 
 	serviceImpl := service.NewService(lg, cfg, repo)
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
-	err := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
-	if err != nil {
-		panic(err)
+	errListenAndServe := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
+	if errListenAndServe != nil {
+		lg.Fatal("http.ListenAndServe:", errListenAndServe)
 	}
 }

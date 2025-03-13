@@ -1,12 +1,16 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 
+	"github.com/jackc/pgerrcode"
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
+	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 	"github.com/sprint1/internal/app/shortener/helpers"
 )
 
@@ -16,13 +20,13 @@ const (
 	GetURLByShortURL = "internal/app/shortener/repository/scripts/get_url_by_short_url.sql"
 )
 
-type RepoImpl struct {
+type RepoDBImpl struct {
 	lg  *zap.SugaredLogger
 	cfg config.Config
 	db  *sqlx.DB
 }
 
-func NewRepoImpl(logger *zap.SugaredLogger, cfg config.Config) (*RepoImpl, error) {
+func NewRepoDBImpl(logger *zap.SugaredLogger, cfg config.Config) (*RepoDBImpl, error) {
 	db, err := Connect(cfg.DNS)
 	if err != nil {
 		return nil, err
@@ -31,7 +35,7 @@ func NewRepoImpl(logger *zap.SugaredLogger, cfg config.Config) (*RepoImpl, error
 	if errMigrate != nil {
 		return nil, errMigrate
 	}
-	return &RepoImpl{
+	return &RepoDBImpl{
 		lg:  logger,
 		cfg: cfg,
 		db:  db,
@@ -58,11 +62,11 @@ func Migrate(db *sqlx.DB) error {
 	return nil
 }
 
-func (r *RepoImpl) Ping() error {
+func (r *RepoDBImpl) Ping() error {
 	return r.db.Ping()
 }
 
-func (r *RepoImpl) CreateURL(shortURL string, originalURL string) error {
+func (r *RepoDBImpl) CreateURL(shortURL string, originalURL string) error {
 	script, errReadFile := helpers.ReadFile(CreateURL)
 	if errReadFile != nil {
 		return fmt.Errorf("db.ReadFile: %w", errReadFile)
@@ -70,13 +74,22 @@ func (r *RepoImpl) CreateURL(shortURL string, originalURL string) error {
 
 	_, errNamedExec := r.db.NamedExec(script, &URL{ShortURL: shortURL, OriginalURL: originalURL})
 	if errNamedExec != nil {
+		if pgErr, ok := errNamedExec.(*pq.Error); ok {
+			code := pgErr.Code
+			switch code {
+			case pgerrcode.UniqueViolation:
+				return custom_errs.ErrUniqueViolation
+			default:
+				return fmt.Errorf("db.NamedExec: %w", errNamedExec)
+			}
+		}
 		return fmt.Errorf("db.NamedExec: %w", errNamedExec)
 	}
 
 	return nil
 }
 
-func (r *RepoImpl) GetURLByShortURL(shortURL string) (*URL, error) {
+func (r *RepoDBImpl) GetURLByShortURL(shortURL string) (*URL, error) {
 	script, errReadFile := helpers.ReadFile(GetURLByShortURL)
 	if errReadFile != nil {
 		return nil, fmt.Errorf("db.ReadFile: %w", errReadFile)
@@ -85,8 +98,10 @@ func (r *RepoImpl) GetURLByShortURL(shortURL string) (*URL, error) {
 	url := &URL{}
 	errGet := r.db.Get(url, script, shortURL)
 	if errGet != nil {
+		if errGet == sql.ErrNoRows {
+			return nil, custom_errs.ErrNotFound
+		}
 		return nil, fmt.Errorf("db.Get: %w", errGet)
-
 	}
 	return url, nil
 }

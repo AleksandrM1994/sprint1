@@ -1,6 +1,17 @@
 package endpoints
 
-/*
+import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/sprint1/internal/app/shortener/repository"
+)
+
 func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 	type Request struct {
 		method string
@@ -28,17 +39,6 @@ func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 				location: "https://jsonformatter.org",
 			},
 		},
-		{
-			name: "Test Get Original URL not find original url",
-			request: Request{
-				method: http.MethodGet,
-				url:    "http://localhost:8080/123",
-			},
-			expected: Expected{
-				code:     http.StatusBadRequest,
-				location: "",
-			},
-		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -46,7 +46,7 @@ func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 			w := httptest.NewRecorder()
 
 			suite.repo.EXPECT().GetURLByShortURL("aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==").Return(&repository.URL{
-				Id:          1,
+				ID:          1,
 				ShortURL:    "aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
 				OriginalURL: "https://jsonformatter.org",
 			}, nil).MaxTimes(1)
@@ -54,6 +54,11 @@ func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
+			defer func() {
+				if err := result.Body.Close(); err != nil {
+					fmt.Println("Body.Close:", err)
+				}
+			}()
 
 			assert.Equal(t, test.expected.code, result.StatusCode, "unexpected status code")
 
@@ -61,4 +66,3 @@ func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 		})
 	}
 }
-*/

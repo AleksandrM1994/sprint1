@@ -35,7 +35,7 @@ func TestEndpointSuite(t *testing.T) {
 	suite := &EndpointsTestSuite{controller: controller, repo: repo}
 
 	suite.Test_SaveUrlHandler(t)
-	//suite.Test_GetOriginalUrlHandler(t)
-	//suite.Test_GetShortenURLHandler(t)
+	suite.Test_GetOriginalUrlHandler(t)
+	suite.Test_GetShortenURLHandler(t)
 	suite.Test_PingHandler(t)
 }
