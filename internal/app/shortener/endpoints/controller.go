@@ -29,9 +29,11 @@ func NewController(router *mux.Router, service service.Service, cfg config.Confi
 }
 
 func (c *Controller) InitHandlers() {
-	c.router.Handle("/", applyMiddlewares(http.HandlerFunc(c.SaveURLHandler), c.lg, middleware.Logging)).Methods("POST")
+	c.router.Handle("/", applyMiddlewares(http.HandlerFunc(c.SaveURLHandler), c.lg, middleware.Logging, middleware.GzipMiddleware)).Methods("POST")
+	c.router.Handle("/ping", applyMiddlewares(http.HandlerFunc(c.PingHandler), c.lg, middleware.Logging)).Methods("GET")
 	c.router.Handle("/{id}", applyMiddlewares(http.HandlerFunc(c.GetOriginalURLHandler), c.lg, middleware.Logging)).Methods("GET")
 	c.router.Handle("/api/shorten", applyMiddlewares(http.HandlerFunc(c.GetShortenURLHandler), c.lg, middleware.Logging, middleware.GzipMiddleware)).Methods("POST")
+	c.router.Handle("/api/shorten/batch", applyMiddlewares(http.HandlerFunc(c.SaveURLsBatch), c.lg, middleware.Logging, middleware.GzipMiddleware)).Methods("POST")
 }
 
 func (c *Controller) GetServeMux() *mux.Router {
