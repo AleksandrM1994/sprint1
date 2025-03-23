@@ -7,9 +7,11 @@ import (
 
 	"github.com/sprint1/config"
 	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/repository"
 	"github.com/sprint1/internal/app/shortener/service"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -17,17 +19,27 @@ func main() {
 	if loggerErr != nil {
 		panic("cannot initialize zap")
 	}
-	defer logger.Sync()
+	defer func() {
+		err := logger.Sync()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	lg := logger.Sugar()
 
 	cfg := config.Init()
 
-	serviceImpl := service.NewService(lg, cfg)
+	repo, errSelectRepo := repository.SelectRepo(lg, cfg)
+	if errSelectRepo != nil {
+		lg.Fatal("repository.SelectRepo:", errSelectRepo)
+	}
+
+	serviceImpl := service.NewService(lg, cfg, repo)
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
-	err := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
-	if err != nil {
-		panic(err)
+	errListenAndServe := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
+	if errListenAndServe != nil {
+		lg.Fatal("http.ListenAndServe:", errListenAndServe)
 	}
 }

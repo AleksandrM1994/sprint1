@@ -2,14 +2,19 @@ package endpoints
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/sprint1/internal/app/shortener/repository"
+	"github.com/sprint1/internal/app/shortener/service"
 )
 
 func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
@@ -35,14 +40,15 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
 				body: &GetShortenURLRequest{
-					URL: "https://practicum.yandex.ru",
+					URL: "https://duckduckgo.com",
 				},
 			},
 			expected: Expected{
 				code: http.StatusCreated,
 				response: &GetShortenURLResponse{
-					Result: "http://localhost:8080/8a9923515b446",
+					Result: "http://localhost:8080/c489a87f9b3b",
 				},
+				contentType: "application/json",
 			},
 		},
 		{
@@ -64,9 +70,36 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(string(body)))
 			w := httptest.NewRecorder()
 
+			r.AddCookie(&http.Cookie{
+				Name:  "auth_cookie",
+				Value: "MTc0Mjc2MzgyMnxKN3VTYTkyYmwzc05tYURNNzFDRFFDT3JKakxxRWRsNnJtckZrV3N6R3dCcXk4anptaWxLOV91cHRsUzc0Z2xkamZTbzdfbjNMQ2s9fNEVcpB5EfxIKduWXSW_wvOyM0TWw2k7yV9uIF8qq5K3",
+			})
+
+			suite.repo.EXPECT().GetUserByID("b371d94a-78d2-4b8d-a5d4-d90e519b42cc").Return(
+				&repository.User{
+					ID:           "b371d94a-78d2-4b8d-a5d4-d90e519b42cc",
+					Login:        "",
+					Password:     "",
+					Cookie:       "MTc0Mjc2MzgyMnxKN3VTYTkyYmwzc05tYURNNzFDRFFDT3JKakxxRWRsNnJtckZrV3N6R3dCcXk4anptaWxLOV91cHRsUzc0Z2xkamZTbzdfbjNMQ2s9fNEVcpB5EfxIKduWXSW_wvOyM0TWw2k7yV9uIF8qq5K3",
+					CookieFinish: service.DatePtr(time.Now().AddDate(100, 0, 0)),
+				},
+				nil).MaxTimes(1)
+			suite.repo.EXPECT().CreateURL("c489a87f9b3b", "https://duckduckgo.com", "b371d94a-78d2-4b8d-a5d4-d90e519b42cc").Return(nil).MaxTimes(1)
+			suite.repo.EXPECT().GetURLByShortURL("c489a87f9b3b").Return(&repository.URL{
+				ID:          1,
+				ShortURL:    "c489a87f9b3b",
+				OriginalURL: "https://duckduckgo.com",
+				UserID:      "b371d94a-78d2-4b8d-a5d4-d90e519b42cc",
+			}, nil).MaxTimes(1)
+
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
+			defer func() {
+				if err := result.Body.Close(); err != nil {
+					fmt.Println("Body.Close:", err)
+				}
+			}()
 
 			assert.Equal(t, test.expected.code, result.StatusCode, "unexpected status code")
 
