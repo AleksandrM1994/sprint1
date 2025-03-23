@@ -18,7 +18,7 @@ func NewRepoMemoryImpl() *RepoMemoryImpl {
 	}
 }
 
-func (r *RepoMemoryImpl) CreateURL(ctx context.Context, shortURL string, originalURL string) error {
+func (r *RepoMemoryImpl) CreateURL(ctx context.Context, shortURL, originalURL string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 

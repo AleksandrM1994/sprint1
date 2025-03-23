@@ -12,14 +12,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Middleware func(*zap.SugaredLogger, http.Handler) http.Handler
+type Middleware func(*zap.SugaredLogger, service.Service, http.Handler) http.Handler
 
 type Controller struct {
 	router  *mux.Router
 	service service.Service
 	cfg     config.Config
 	lg      *zap.SugaredLogger
-	http.Handler
 }
 
 func NewController(router *mux.Router, service service.Service, cfg config.Config, lg *zap.SugaredLogger) *Controller {
@@ -29,20 +28,90 @@ func NewController(router *mux.Router, service service.Service, cfg config.Confi
 }
 
 func (c *Controller) InitHandlers() {
-	c.router.Handle("/", applyMiddlewares(http.HandlerFunc(c.SaveURLHandler), c.lg, middleware.Logging, middleware.GzipMiddleware)).Methods("POST")
-	c.router.Handle("/ping", applyMiddlewares(http.HandlerFunc(c.PingHandler), c.lg, middleware.Logging)).Methods("GET")
-	c.router.Handle("/{id}", applyMiddlewares(http.HandlerFunc(c.GetOriginalURLHandler), c.lg, middleware.Logging)).Methods("GET")
-	c.router.Handle("/api/shorten", applyMiddlewares(http.HandlerFunc(c.GetShortenURLHandler), c.lg, middleware.Logging, middleware.GzipMiddleware)).Methods("POST")
-	c.router.Handle("/api/shorten/batch", applyMiddlewares(http.HandlerFunc(c.SaveURLsBatch), c.lg, middleware.Logging, middleware.GzipMiddleware)).Methods("POST")
+	c.router.Handle(
+		"/",
+		applyMiddlewares(
+			http.HandlerFunc(c.SaveURLHandler),
+			c.lg,
+			c.service,
+			middleware.Logging,
+			middleware.GzipMiddleware,
+		),
+	).Methods("POST")
+	c.router.Handle(
+		"/ping",
+		applyMiddlewares(
+			http.HandlerFunc(c.PingHandler),
+			c.lg,
+			c.service,
+			middleware.Logging,
+		),
+	).Methods("GET")
+	c.router.Handle("/{id}",
+		applyMiddlewares(
+			http.HandlerFunc(c.GetOriginalURLHandler),
+			c.lg,
+			c.service,
+			middleware.Logging,
+		),
+	).Methods("GET")
+	c.router.Handle(
+		"/api/shorten",
+		applyMiddlewares(
+			http.HandlerFunc(c.GetShortenURLHandler),
+			c.lg,
+			c.service,
+			middleware.Logging,
+			middleware.GzipMiddleware,
+		),
+	).Methods("POST")
+	c.router.Handle(
+		"/api/shorten/batch",
+		applyMiddlewares(
+			http.HandlerFunc(c.SaveURLsBatch),
+			c.lg,
+			c.service,
+			middleware.Logging,
+			middleware.GzipMiddleware,
+		),
+	).Methods("POST")
+	c.router.Handle(
+		"/api/user/create",
+		applyMiddlewares(
+			http.HandlerFunc(c.CreateUser),
+			c.lg,
+			c.service,
+			middleware.Logging,
+		),
+	).Methods("POST")
+	c.router.Handle(
+		"/api/user/auth",
+		applyMiddlewares(
+			http.HandlerFunc(c.AuthUser),
+			c.lg,
+			c.service,
+			middleware.Logging,
+		),
+	).Methods("POST")
+	c.router.Handle(
+		"/api/user/urls",
+		applyMiddlewares(
+			http.HandlerFunc(c.GetUserURLs),
+			c.lg,
+			c.service,
+			middleware.Logging,
+			middleware.Authenticate,
+		),
+	).Methods("GET")
 }
 
 func (c *Controller) GetServeMux() *mux.Router {
 	return c.router
 }
 
-func applyMiddlewares(h http.Handler, lg *zap.SugaredLogger, middlewares ...Middleware) http.Handler {
+func applyMiddlewares(h http.Handler, lg *zap.SugaredLogger, s service.Service, middlewares ...Middleware) http.Handler {
 	for _, mw := range middlewares {
-		h = mw(lg, h)
+		h = mw(lg, s, h)
 	}
 	return h
 }

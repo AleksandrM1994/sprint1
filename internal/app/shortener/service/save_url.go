@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
+	"github.com/sprint1/internal/app/shortener/repository"
 )
 
 func (s *ServiceImpl) SaveURL(ctx context.Context, url string) (string, error) {
@@ -13,7 +14,12 @@ func (s *ServiceImpl) SaveURL(ctx context.Context, url string) (string, error) {
 
 	s.lg.Infow("SaveURL request", "url", url, "shortURL", shortURL)
 
-	errCreateURL := s.repo.CreateURL(ctx, shortURL, url)
+	dbRepo, ok := s.repo.(repository.RepoDB)
+	if !ok {
+		return "", errors.New("failed to cast repo to repo.DB")
+	}
+
+	errCreateURL := dbRepo.CreateURL(ctx, shortURL, url)
 	if errCreateURL != nil {
 		if errors.Is(errCreateURL, custom_errs.ErrUniqueViolation) {
 			urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(ctx, shortURL)

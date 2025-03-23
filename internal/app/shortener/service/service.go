@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+
+	"github.com/sprint1/internal/app/shortener/repository"
 )
 
 type Service interface {
@@ -10,4 +12,10 @@ type Service interface {
 	InsertURLInFile(URLInfo *URLInfo) error
 	Ping(ctx context.Context) error
 	SaveURLsBatch(ctx context.Context, urls []*URLInBatch) ([]*URLInBatch, error)
+	CreateUser(ctx context.Context, login string) (string, error)
+	AuthenticateUser(ctx context.Context, login, password string) (*repository.User, error)
+	CheckCookie(ctx context.Context, cookie string) (string, error)
+	GetUserURLs(ctx context.Context, userID string) ([]*UserURLs, error)
+
+	HashData(data []byte) (string, error)
 }

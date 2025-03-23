@@ -5,9 +5,11 @@ import (
 	"strings"
 
 	"go.uber.org/zap"
+
+	"github.com/sprint1/internal/app/shortener/service"
 )
 
-func GzipMiddleware(lg *zap.SugaredLogger, next http.Handler) http.Handler {
+func GzipMiddleware(lg *zap.SugaredLogger, s service.Service, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции

@@ -64,11 +64,26 @@ func (suite *EndpointsTestSuite) Test_SaveUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
+			r.AddCookie(&http.Cookie{
+				Name:  "auth_cookie",
+				Value: "MTc0Mjc2MzgyMnxKN3VTYTkyYmwzc05tYURNNzFDRFFDT3JKakxxRWRsNnJtckZrV3N6R3dCcXk4anptaWxLOV91cHRsUzc0Z2xkamZTbzdfbjNMQ2s9fNEVcpB5EfxIKduWXSW_wvOyM0TWw2k7yV9uIF8qq5K3",
+			})
+
+			//cookieFinish := time.Now().AddDate(99, 0, 0)
+			//suite.repo.EXPECT().GetUserByID(gomock.Any(), "b371d94a-78d2-4b8d-a5d4-d90e519b42cc").Return(
+			//	&repository.User{
+			//		ID:           "b371d94a-78d2-4b8d-a5d4-d90e519b42cc",
+			//		Login:        "b371d94a",
+			//		Password:     "b371d94a",
+			//		Cookie:       "MTc0Mjc2MzgyMnxKN3VTYTkyYmwzc05tYURNNzFDRFFDT3JKakxxRWRsNnJtckZrV3N6R3dCcXk4anptaWxLOV91cHRsUzc0Z2xkamZTbzdfbjNMQ2s9fNEVcpB5EfxIKduWXSW_wvOyM0TWw2k7yV9uIF8qq5K3",
+			//		CookieFinish: &cookieFinish,
+			//	}, nil).MaxTimes(1)
 			suite.repo.EXPECT().CreateURL(gomock.Any(), "8a9923515b44", "https://practicum.yandex.ru").Return(nil).MaxTimes(1)
 			suite.repo.EXPECT().GetURLByShortURL(gomock.Any(), "8a9923515b44").Return(&repository.URL{
 				ID:          1,
 				ShortURL:    "8a9923515b44",
 				OriginalURL: "https://practicum.yandex.ru",
+				UserID:      "b371d94a-78d2-4b8d-a5d4-d90e519b42cc",
 			}, nil).MaxTimes(1)
 
 			suite.controller.GetServeMux().ServeHTTP(w, r)
