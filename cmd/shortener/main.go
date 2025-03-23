@@ -19,7 +19,12 @@ func main() {
 	if loggerErr != nil {
 		panic("cannot initialize zap")
 	}
-	defer logger.Sync()
+	defer func() {
+		err := logger.Sync()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	lg := logger.Sugar()
 

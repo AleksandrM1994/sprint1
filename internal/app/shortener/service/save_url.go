@@ -8,7 +8,7 @@ import (
 	"github.com/sprint1/internal/app/shortener/helpers"
 )
 
-func (s *ServiceImpl) SaveURL(url string) (string, error) {
+func (s *ServiceImpl) SaveURL(userID, url string) (string, error) {
 	var shortURL string
 	count := 0
 
@@ -21,7 +21,7 @@ func (s *ServiceImpl) SaveURL(url string) (string, error) {
 
 	s.lg.Infow("SaveURL request", "url", url, "shortURL", shortURL)
 
-	errCreateURL := s.repo.CreateURL(shortURL, url)
+	errCreateURL := s.repo.CreateURL(shortURL, url, userID)
 	if errCreateURL != nil {
 		if errors.Is(errCreateURL, custom_errs.ErrUniqueViolation) {
 			urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(shortURL)

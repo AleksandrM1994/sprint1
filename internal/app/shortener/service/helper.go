@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"time"
 )
 
 func HashString(s string) string {
@@ -13,4 +14,8 @@ func HashString(s string) string {
 	hashInBytes := hash.Sum(nil)
 
 	return hex.EncodeToString(hashInBytes)
+}
+
+func DatePtr(date time.Time) *time.Time {
+	return &date
 }

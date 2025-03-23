@@ -35,17 +35,31 @@ func (m *MockRepo) EXPECT() *MockRepoMockRecorder {
 }
 
 // CreateURL mocks base method.
-func (m *MockRepo) CreateURL(shortURL, originalURL string) error {
+func (m *MockRepo) CreateURL(shortURL, originalURL, userID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateURL", shortURL, originalURL)
+	ret := m.ctrl.Call(m, "CreateURL", shortURL, originalURL, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateURL indicates an expected call of CreateURL.
-func (mr *MockRepoMockRecorder) CreateURL(shortURL, originalURL interface{}) *gomock.Call {
+func (mr *MockRepoMockRecorder) CreateURL(shortURL, originalURL, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepo)(nil).CreateURL), shortURL, originalURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepo)(nil).CreateURL), shortURL, originalURL, userID)
+}
+
+// CreateUser mocks base method.
+func (m *MockRepo) CreateUser(id, login, password string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUser", id, login, password)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateUser indicates an expected call of CreateUser.
+func (mr *MockRepoMockRecorder) CreateUser(id, login, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockRepo)(nil).CreateUser), id, login, password)
 }
 
 // GetURLByShortURL mocks base method.
@@ -63,6 +77,36 @@ func (mr *MockRepoMockRecorder) GetURLByShortURL(shortURL interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetURLByShortURL", reflect.TypeOf((*MockRepo)(nil).GetURLByShortURL), shortURL)
 }
 
+// GetUser mocks base method.
+func (m *MockRepo) GetUser(login, password string) (*repository.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUser", login, password)
+	ret0, _ := ret[0].(*repository.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUser indicates an expected call of GetUser.
+func (mr *MockRepoMockRecorder) GetUser(login, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockRepo)(nil).GetUser), login, password)
+}
+
+// GetUserByID mocks base method.
+func (m *MockRepo) GetUserByID(id string) (*repository.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByID", id)
+	ret0, _ := ret[0].(*repository.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByID indicates an expected call of GetUserByID.
+func (mr *MockRepoMockRecorder) GetUserByID(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockRepo)(nil).GetUserByID), id)
+}
+
 // Ping mocks base method.
 func (m *MockRepo) Ping() error {
 	m.ctrl.T.Helper()
@@ -75,4 +119,18 @@ func (m *MockRepo) Ping() error {
 func (mr *MockRepoMockRecorder) Ping() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockRepo)(nil).Ping))
+}
+
+// UpdateUser mocks base method.
+func (m *MockRepo) UpdateUser(user *repository.User) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUser", user)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUser indicates an expected call of UpdateUser.
+func (mr *MockRepoMockRecorder) UpdateUser(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockRepo)(nil).UpdateUser), user)
 }

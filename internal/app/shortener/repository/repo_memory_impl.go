@@ -17,7 +17,7 @@ func NewRepoMemoryImpl() *RepoMemoryImpl {
 	}
 }
 
-func (r *RepoMemoryImpl) CreateURL(shortURL string, originalURL string) error {
+func (r *RepoMemoryImpl) CreateURL(shortURL, originalURL, userID string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -54,4 +54,19 @@ func (r *RepoMemoryImpl) GetURLByShortURL(shortURL string) (*URL, error) {
 
 func (r *RepoMemoryImpl) Ping() error {
 	return nil
+}
+
+func (r *RepoMemoryImpl) CreateUser(id, login, password string) error {
+	return nil
+}
+
+func (r *RepoMemoryImpl) GetUser(login, password string) (*User, error) {
+	return nil, nil
+}
+
+func (r *RepoMemoryImpl) UpdateUser(user *User) error {
+	return nil
+}
+func (r *RepoMemoryImpl) GetUserByID(id string) (*User, error) {
+	return nil, nil
 }

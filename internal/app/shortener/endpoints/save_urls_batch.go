@@ -3,6 +3,8 @@ package endpoints
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/sprint1/internal/app/shortener/endpoints/middleware"
 )
 
 type URLInBatch struct {
@@ -20,10 +22,13 @@ func (c *Controller) SaveURLsBatch(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	ctx := req.Context()
+	userID := ctx.Value(middleware.UserID).(string)
+
 	saveURLsBatchResponse := make([]URLInBatch, 0, len(saveURLsBatchRequest))
 	if len(saveURLsBatchRequest) != 0 {
 		for _, url := range saveURLsBatchRequest {
-			shortURL, errSaveURL := c.service.SaveURL(url.OriginalURL)
+			shortURL, errSaveURL := c.service.SaveURL(userID, url.OriginalURL)
 			if errSaveURL != nil {
 				res.WriteHeader(http.StatusInternalServerError)
 				http.Error(res, errSaveURL.Error(), http.StatusInternalServerError)
