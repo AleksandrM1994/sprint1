@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -63,8 +64,8 @@ func (suite *EndpointsTestSuite) Test_SaveUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			suite.repo.EXPECT().CreateURL("8a9923515b44", "https://practicum.yandex.ru").Return(nil).MaxTimes(1)
-			suite.repo.EXPECT().GetURLByShortURL("8a9923515b44").Return(&repository.URL{
+			suite.repo.EXPECT().CreateURL(gomock.Any(), "8a9923515b44", "https://practicum.yandex.ru").Return(nil).MaxTimes(1)
+			suite.repo.EXPECT().GetURLByShortURL(gomock.Any(), "8a9923515b44").Return(&repository.URL{
 				ID:          1,
 				ShortURL:    "8a9923515b44",
 				OriginalURL: "https://practicum.yandex.ru",

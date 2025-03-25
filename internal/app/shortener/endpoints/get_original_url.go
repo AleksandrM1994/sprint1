@@ -1,12 +1,17 @@
 package endpoints
 
 import (
+	"context"
 	"net/http"
+	"time"
 )
 
 func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Request) {
+	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
+	defer cancel()
+
 	id := req.URL.Path[len("/"):]
-	originalURL, err := c.service.GetOriginalURL(id)
+	originalURL, err := c.service.GetOriginalURL(ctx, id)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		return

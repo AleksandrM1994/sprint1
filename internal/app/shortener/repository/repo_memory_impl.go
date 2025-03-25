@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"sync"
 
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
@@ -17,7 +18,7 @@ func NewRepoMemoryImpl() *RepoMemoryImpl {
 	}
 }
 
-func (r *RepoMemoryImpl) CreateURL(shortURL string, originalURL string) error {
+func (r *RepoMemoryImpl) CreateURL(ctx context.Context, shortURL string, originalURL string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -29,7 +30,7 @@ func (r *RepoMemoryImpl) CreateURL(shortURL string, originalURL string) error {
 	return nil
 }
 
-func (r *RepoMemoryImpl) GetURLByShortURL(shortURL string) (*URL, error) {
+func (r *RepoMemoryImpl) GetURLByShortURL(ctx context.Context, shortURL string) (*URL, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -50,8 +51,4 @@ func (r *RepoMemoryImpl) GetURLByShortURL(shortURL string) (*URL, error) {
 	}
 
 	return nil, custom_errs.ErrNotFound
-}
-
-func (r *RepoMemoryImpl) Ping() error {
-	return nil
 }

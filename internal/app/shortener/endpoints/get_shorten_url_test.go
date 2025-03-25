@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -68,8 +69,8 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(string(body)))
 			w := httptest.NewRecorder()
 
-			suite.repo.EXPECT().CreateURL("c489a87f9b3b", "https://duckduckgo.com").Return(nil).MaxTimes(1)
-			suite.repo.EXPECT().GetURLByShortURL("c489a87f9b3b").Return(&repository.URL{
+			suite.repo.EXPECT().CreateURL(gomock.Any(), "c489a87f9b3b", "https://duckduckgo.com").Return(nil).MaxTimes(1)
+			suite.repo.EXPECT().GetURLByShortURL(gomock.Any(), "c489a87f9b3b").Return(&repository.URL{
 				ID:          1,
 				ShortURL:    "c489a87f9b3b",
 				OriginalURL: "https://duckduckgo.com",

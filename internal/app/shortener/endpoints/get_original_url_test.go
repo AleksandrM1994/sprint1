@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/sprint1/internal/app/shortener/repository"
@@ -45,7 +46,7 @@ func (suite *EndpointsTestSuite) Test_GetOriginalUrlHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(test.request.body))
 			w := httptest.NewRecorder()
 
-			suite.repo.EXPECT().GetURLByShortURL("aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==").Return(&repository.URL{
+			suite.repo.EXPECT().GetURLByShortURL(gomock.Any(), "aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==").Return(&repository.URL{
 				ID:          1,
 				ShortURL:    "aHR0cHM6Ly9qc29uZm9ybWF0dGVyLm9yZw==",
 				OriginalURL: "https://jsonformatter.org",

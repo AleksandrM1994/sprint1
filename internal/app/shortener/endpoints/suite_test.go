@@ -14,7 +14,7 @@ import (
 
 type EndpointsTestSuite struct {
 	controller *Controller
-	repo       *mocks.MockRepo
+	repo       *mocks.MockRepoDB
 }
 
 func TestEndpointSuite(t *testing.T) {
@@ -29,7 +29,7 @@ func TestEndpointSuite(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	repo := mocks.NewMockRepo(ctrl)
+	repo := mocks.NewMockRepoDB(ctrl)
 	serviceImpl := service.NewService(lg, cfg, repo)
 	controller := NewController(router, serviceImpl, cfg, lg)
 	suite := &EndpointsTestSuite{controller: controller, repo: repo}

@@ -1,10 +1,12 @@
 package endpoints
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
+	"time"
 
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
@@ -18,6 +20,9 @@ type GetShortenURLResponse struct {
 }
 
 func (c *Controller) GetShortenURLHandler(res http.ResponseWriter, req *http.Request) {
+	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
+	defer cancel()
+
 	request, err := io.ReadAll(req.Body)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
@@ -34,7 +39,7 @@ func (c *Controller) GetShortenURLHandler(res http.ResponseWriter, req *http.Req
 	}
 
 	if getShortenURLRequest.URL != "" {
-		shortURL, errSaveURL := c.service.SaveURL(getShortenURLRequest.URL)
+		shortURL, errSaveURL := c.service.SaveURL(ctx, getShortenURLRequest.URL)
 		switch {
 		case errors.Is(errSaveURL, custom_errs.ErrUniqueViolation) && shortURL != "":
 			res.Header().Set("Content-Type", "application/json")

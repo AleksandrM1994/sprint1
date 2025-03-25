@@ -1,20 +1,23 @@
 package repository
 
 import (
-	"fmt"
-
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
 )
 
-func SelectRepo(lg *zap.SugaredLogger, cfg config.Config) (Repo, error) {
+func SelectRepo(lg *zap.SugaredLogger, cfg config.Config) (RepoBase, error) {
 	if cfg.DNS != "" {
-		repo, errNewRepoImpl := NewRepoDBImpl(lg, cfg)
-		if errNewRepoImpl != nil {
-			return nil, fmt.Errorf("repository.NewRepoImpl:%w", errNewRepoImpl)
+		db, err := Connect(cfg.DNS)
+		if err != nil {
+			return nil, err
 		}
-		return repo, nil
+		errMigrate := Migrate(db)
+		if errMigrate != nil {
+			return nil, errMigrate
+		}
+
+		return &RepoDBImpl{lg: lg, cfg: cfg, db: db}, nil
 	}
 
 	return NewRepoMemoryImpl(), nil

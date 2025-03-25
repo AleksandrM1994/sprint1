@@ -1,14 +1,19 @@
 package endpoints
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
+	"time"
 
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
 func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) {
+	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
+	defer cancel()
+
 	request, err := io.ReadAll(req.Body)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
@@ -18,7 +23,7 @@ func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) 
 
 	url := string(request)
 	if url != "" {
-		shortURL, errSaveURL := c.service.SaveURL(url)
+		shortURL, errSaveURL := c.service.SaveURL(ctx, url)
 		switch {
 		case errors.Is(errSaveURL, custom_errs.ErrUniqueViolation) && shortURL != "":
 			res.WriteHeader(http.StatusConflict)

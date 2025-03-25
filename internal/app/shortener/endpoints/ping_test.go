@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,7 +45,7 @@ func (suite *EndpointsTestSuite) Test_PingHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(string(body)))
 			w := httptest.NewRecorder()
 
-			suite.repo.EXPECT().Ping().Return(nil).Times(1)
+			suite.repo.EXPECT().Ping(gomock.Any()).Return(nil).Times(1)
 
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 

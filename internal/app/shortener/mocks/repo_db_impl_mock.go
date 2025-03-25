@@ -5,74 +5,141 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
 	repository "github.com/sprint1/internal/app/shortener/repository"
 )
 
-// MockRepo is a mock of Repo interface.
-type MockRepo struct {
+// MockRepoBase is a mock of RepoBase interface.
+type MockRepoBase struct {
 	ctrl     *gomock.Controller
-	recorder *MockRepoMockRecorder
+	recorder *MockRepoBaseMockRecorder
 }
 
-// MockRepoMockRecorder is the mock recorder for MockRepo.
-type MockRepoMockRecorder struct {
-	mock *MockRepo
+// MockRepoBaseMockRecorder is the mock recorder for MockRepoBase.
+type MockRepoBaseMockRecorder struct {
+	mock *MockRepoBase
 }
 
-// NewMockRepo creates a new mock instance.
-func NewMockRepo(ctrl *gomock.Controller) *MockRepo {
-	mock := &MockRepo{ctrl: ctrl}
-	mock.recorder = &MockRepoMockRecorder{mock}
+// NewMockRepoBase creates a new mock instance.
+func NewMockRepoBase(ctrl *gomock.Controller) *MockRepoBase {
+	mock := &MockRepoBase{ctrl: ctrl}
+	mock.recorder = &MockRepoBaseMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockRepo) EXPECT() *MockRepoMockRecorder {
+func (m *MockRepoBase) EXPECT() *MockRepoBaseMockRecorder {
 	return m.recorder
 }
 
 // CreateURL mocks base method.
-func (m *MockRepo) CreateURL(shortURL, originalURL string) error {
+func (m *MockRepoBase) CreateURL(ctx context.Context, shortURL, originalURL string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateURL", shortURL, originalURL)
+	ret := m.ctrl.Call(m, "CreateURL", ctx, shortURL, originalURL)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateURL indicates an expected call of CreateURL.
-func (mr *MockRepoMockRecorder) CreateURL(shortURL, originalURL interface{}) *gomock.Call {
+func (mr *MockRepoBaseMockRecorder) CreateURL(ctx, shortURL, originalURL interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepo)(nil).CreateURL), shortURL, originalURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepoBase)(nil).CreateURL), ctx, shortURL, originalURL)
 }
 
 // GetURLByShortURL mocks base method.
-func (m *MockRepo) GetURLByShortURL(shortURL string) (*repository.URL, error) {
+func (m *MockRepoBase) GetURLByShortURL(ctx context.Context, shortURL string) (*repository.URL, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetURLByShortURL", shortURL)
+	ret := m.ctrl.Call(m, "GetURLByShortURL", ctx, shortURL)
 	ret0, _ := ret[0].(*repository.URL)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetURLByShortURL indicates an expected call of GetURLByShortURL.
-func (mr *MockRepoMockRecorder) GetURLByShortURL(shortURL interface{}) *gomock.Call {
+func (mr *MockRepoBaseMockRecorder) GetURLByShortURL(ctx, shortURL interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetURLByShortURL", reflect.TypeOf((*MockRepo)(nil).GetURLByShortURL), shortURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetURLByShortURL", reflect.TypeOf((*MockRepoBase)(nil).GetURLByShortURL), ctx, shortURL)
+}
+
+// MockRepoDB is a mock of RepoDB interface.
+type MockRepoDB struct {
+	ctrl     *gomock.Controller
+	recorder *MockRepoDBMockRecorder
+}
+
+// MockRepoDBMockRecorder is the mock recorder for MockRepoDB.
+type MockRepoDBMockRecorder struct {
+	mock *MockRepoDB
+}
+
+// NewMockRepoDB creates a new mock instance.
+func NewMockRepoDB(ctrl *gomock.Controller) *MockRepoDB {
+	mock := &MockRepoDB{ctrl: ctrl}
+	mock.recorder = &MockRepoDBMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRepoDB) EXPECT() *MockRepoDBMockRecorder {
+	return m.recorder
+}
+
+// CreateURL mocks base method.
+func (m *MockRepoDB) CreateURL(ctx context.Context, shortURL, originalURL string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateURL", ctx, shortURL, originalURL)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateURL indicates an expected call of CreateURL.
+func (mr *MockRepoDBMockRecorder) CreateURL(ctx, shortURL, originalURL interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepoDB)(nil).CreateURL), ctx, shortURL, originalURL)
+}
+
+// CreateURLs mocks base method.
+func (m *MockRepoDB) CreateURLs(ctx context.Context, urls []*repository.URL) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateURLs", ctx, urls)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateURLs indicates an expected call of CreateURLs.
+func (mr *MockRepoDBMockRecorder) CreateURLs(ctx, urls interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURLs", reflect.TypeOf((*MockRepoDB)(nil).CreateURLs), ctx, urls)
+}
+
+// GetURLByShortURL mocks base method.
+func (m *MockRepoDB) GetURLByShortURL(ctx context.Context, shortURL string) (*repository.URL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetURLByShortURL", ctx, shortURL)
+	ret0, _ := ret[0].(*repository.URL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetURLByShortURL indicates an expected call of GetURLByShortURL.
+func (mr *MockRepoDBMockRecorder) GetURLByShortURL(ctx, shortURL interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetURLByShortURL", reflect.TypeOf((*MockRepoDB)(nil).GetURLByShortURL), ctx, shortURL)
 }
 
 // Ping mocks base method.
-func (m *MockRepo) Ping() error {
+func (m *MockRepoDB) Ping(ctx context.Context) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Ping")
+	ret := m.ctrl.Call(m, "Ping", ctx)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Ping indicates an expected call of Ping.
-func (mr *MockRepoMockRecorder) Ping() *gomock.Call {
+func (mr *MockRepoDBMockRecorder) Ping(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockRepo)(nil).Ping))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockRepoDB)(nil).Ping), ctx)
 }

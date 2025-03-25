@@ -10,9 +10,9 @@ import (
 type ServiceImpl struct {
 	lg   *zap.SugaredLogger
 	cfg  config.Config
-	repo repository.Repo
+	repo repository.RepoBase
 }
 
-func NewService(lg *zap.SugaredLogger, cfg config.Config, repo repository.Repo) *ServiceImpl {
+func NewService(lg *zap.SugaredLogger, cfg config.Config, repo repository.RepoBase) *ServiceImpl {
 	return &ServiceImpl{lg: lg, cfg: cfg, repo: repo}
 }
