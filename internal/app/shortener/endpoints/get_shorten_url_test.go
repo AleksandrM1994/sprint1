@@ -2,14 +2,18 @@ package endpoints
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/sprint1/internal/app/shortener/repository"
 )
 
 func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
@@ -35,14 +39,15 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
 				body: &GetShortenURLRequest{
-					URL: "https://practicum.yandex.ru",
+					URL: "https://duckduckgo.com",
 				},
 			},
 			expected: Expected{
 				code: http.StatusCreated,
 				response: &GetShortenURLResponse{
-					Result: "http://localhost:8080/8a9923515b446",
+					Result: "http://localhost:8080/c489a87f9b3b",
 				},
+				contentType: "application/json",
 			},
 		},
 		{
@@ -64,9 +69,21 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(string(body)))
 			w := httptest.NewRecorder()
 
+			suite.repo.EXPECT().CreateURL(gomock.Any(), "c489a87f9b3b", "https://duckduckgo.com").Return(nil).MaxTimes(1)
+			suite.repo.EXPECT().GetURLByShortURL(gomock.Any(), "c489a87f9b3b").Return(&repository.URL{
+				ID:          1,
+				ShortURL:    "c489a87f9b3b",
+				OriginalURL: "https://duckduckgo.com",
+			}, nil).MaxTimes(1)
+
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 
 			result := w.Result()
+			defer func() {
+				if err := result.Body.Close(); err != nil {
+					fmt.Println("Body.Close:", err)
+				}
+			}()
 
 			assert.Equal(t, test.expected.code, result.StatusCode, "unexpected status code")
 

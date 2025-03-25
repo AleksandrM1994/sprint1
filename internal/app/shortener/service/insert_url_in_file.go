@@ -6,7 +6,7 @@ import (
 )
 
 type URLInfo struct {
-	UUID        int    `json:"uuid"`
+	UUID        int64  `json:"uuid"`
 	ShortURL    string `json:"short_url"`
 	OriginalURL string `json:"original_url"`
 }
