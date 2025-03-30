@@ -51,5 +51,7 @@ func (s *ServiceImpl) AuthenticateUser(ctx context.Context, login, password stri
 		return nil, fmt.Errorf("failed update user: %w", errUpdateUser)
 	}
 
+	s.lg.Infow("authenticated user", "user", user)
+
 	return user, nil
 }

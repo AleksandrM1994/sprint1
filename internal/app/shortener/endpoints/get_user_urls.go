@@ -19,16 +19,21 @@ func (c *Controller) GetUserURLs(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()
 
-	userID := ctx.Value(middleware.UserID).(string)
+	userIDValue := ctx.Value(middleware.UserID)
+	userID, ok := userIDValue.(string)
+	if !ok {
+		userID = ""
+	}
 
 	urls, errGetUserURLs := c.service.GetUserURLs(ctx, userID)
 	if errGetUserURLs != nil {
+		c.lg.Infow("GetUserURLs error", "error", errGetUserURLs)
 		makeEndpointError(res, errGetUserURLs)
 		return
 	}
 
 	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusCreated)
+	res.WriteHeader(http.StatusOK)
 	response := mappingGetUserURLsResponse(urls)
 	body, errMarshal := json.Marshal(response)
 	if errMarshal != nil {

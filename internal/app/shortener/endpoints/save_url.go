@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/sprint1/internal/app/shortener/endpoints/middleware"
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
@@ -21,9 +22,15 @@ func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) 
 		return
 	}
 
+	userIDValue := ctx.Value(middleware.UserID)
+	userID, ok := userIDValue.(string)
+	if !ok {
+		userID = ""
+	}
+
 	url := string(request)
 	if url != "" {
-		shortURL, errSaveURL := c.service.SaveURL(ctx, url)
+		shortURL, errSaveURL := c.service.SaveURL(ctx, url, userID)
 		switch {
 		case errors.Is(errSaveURL, custom_errs.ErrUniqueViolation) && shortURL != "":
 			res.WriteHeader(http.StatusConflict)

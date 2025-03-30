@@ -10,7 +10,5 @@ create table if not exists users
 );
 
 ALTER TABLE urls
-    ADD COLUMN user_id VARCHAR(50),
-    ADD CONSTRAINT fk_user
-        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+    ADD COLUMN user_id VARCHAR(50)
 -- +goose StatementEnd

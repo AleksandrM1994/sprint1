@@ -39,7 +39,7 @@ func (c *Controller) GetShortenURLHandler(res http.ResponseWriter, req *http.Req
 	}
 
 	if getShortenURLRequest.URL != "" {
-		shortURL, errSaveURL := c.service.SaveURL(ctx, getShortenURLRequest.URL)
+		shortURL, errSaveURL := c.service.SaveURL(ctx, getShortenURLRequest.URL, "")
 		switch {
 		case errors.Is(errSaveURL, custom_errs.ErrUniqueViolation) && shortURL != "":
 			res.Header().Set("Content-Type", "application/json")

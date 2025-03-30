@@ -15,14 +15,12 @@ type UserURLs struct {
 }
 
 func (s *ServiceImpl) GetUserURLs(ctx context.Context, userID string) ([]*UserURLs, error) {
-	if userID == "" {
-		return nil, custom_errs.ErrValidate
-	}
-
 	dbRepo, ok := s.repo.(repository.RepoDB)
 	if !ok {
 		return nil, errors.New("failed to cast repo to repo.DB")
 	}
+
+	s.lg.Infow("GetUserURLsRequest", "userID", userID)
 
 	urls, errGetURLsByUserID := dbRepo.GetURLsByUserID(ctx, userID)
 	if errGetURLsByUserID != nil {

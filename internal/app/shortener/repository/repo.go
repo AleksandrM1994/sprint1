@@ -3,7 +3,7 @@ package repository
 import "context"
 
 type RepoBase interface {
-	CreateURL(ctx context.Context, shortURL, originalURL string) error
+	CreateURL(ctx context.Context, shortURL, originalURL, userID string) error
 	GetURLByShortURL(ctx context.Context, shortURL string) (*URL, error)
 }
 

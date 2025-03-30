@@ -36,17 +36,17 @@ func (m *MockRepoBase) EXPECT() *MockRepoBaseMockRecorder {
 }
 
 // CreateURL mocks base method.
-func (m *MockRepoBase) CreateURL(ctx context.Context, shortURL, originalURL string) error {
+func (m *MockRepoBase) CreateURL(ctx context.Context, shortURL, originalURL, userID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateURL", ctx, shortURL, originalURL)
+	ret := m.ctrl.Call(m, "CreateURL", ctx, shortURL, originalURL, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateURL indicates an expected call of CreateURL.
-func (mr *MockRepoBaseMockRecorder) CreateURL(ctx, shortURL, originalURL interface{}) *gomock.Call {
+func (mr *MockRepoBaseMockRecorder) CreateURL(ctx, shortURL, originalURL, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepoBase)(nil).CreateURL), ctx, shortURL, originalURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepoBase)(nil).CreateURL), ctx, shortURL, originalURL, userID)
 }
 
 // GetURLByShortURL mocks base method.
@@ -88,17 +88,17 @@ func (m *MockRepoDB) EXPECT() *MockRepoDBMockRecorder {
 }
 
 // CreateURL mocks base method.
-func (m *MockRepoDB) CreateURL(ctx context.Context, shortURL, originalURL string) error {
+func (m *MockRepoDB) CreateURL(ctx context.Context, shortURL, originalURL, userID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateURL", ctx, shortURL, originalURL)
+	ret := m.ctrl.Call(m, "CreateURL", ctx, shortURL, originalURL, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateURL indicates an expected call of CreateURL.
-func (mr *MockRepoDBMockRecorder) CreateURL(ctx, shortURL, originalURL interface{}) *gomock.Call {
+func (mr *MockRepoDBMockRecorder) CreateURL(ctx, shortURL, originalURL, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepoDB)(nil).CreateURL), ctx, shortURL, originalURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateURL", reflect.TypeOf((*MockRepoDB)(nil).CreateURL), ctx, shortURL, originalURL, userID)
 }
 
 // CreateURLs mocks base method.

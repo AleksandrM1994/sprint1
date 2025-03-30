@@ -51,8 +51,8 @@ func (r *RepoDBImpl) Ping(ctx context.Context) error {
 	return r.db.PingContext(ctx)
 }
 
-func (r *RepoDBImpl) CreateURL(ctx context.Context, shortURL, originalURL string) error {
-	_, errExecContext := r.db.ExecContext(ctx, CreateURL, shortURL, originalURL)
+func (r *RepoDBImpl) CreateURL(ctx context.Context, shortURL, originalURL, userID string) error {
+	_, errExecContext := r.db.ExecContext(ctx, CreateURL, shortURL, originalURL, userID)
 	if errExecContext == nil {
 		return nil
 	}
@@ -84,7 +84,7 @@ func (r *RepoDBImpl) CreateURLs(ctx context.Context, urls []*URL) error {
 	}
 
 	for _, url := range urls {
-		_, errExecContext := tx.ExecContext(ctx, CreateURL, url.ShortURL, url.OriginalURL)
+		_, errExecContext := tx.ExecContext(ctx, CreateURL, url.ShortURL, url.OriginalURL, url.UserID)
 		if errExecContext != nil {
 			if errRollback := tx.Rollback(); errRollback != nil {
 				return fmt.Errorf("error rollback: %v", errRollback)

@@ -13,7 +13,7 @@ type URLInBatch struct {
 	ShortURL      string
 }
 
-func (s *ServiceImpl) SaveURLsBatch(ctx context.Context, urls []*URLInBatch) ([]*URLInBatch, error) {
+func (s *ServiceImpl) SaveURLsBatch(ctx context.Context, urls []*URLInBatch, userID string) ([]*URLInBatch, error) {
 	var newURLs []*URLInBatch
 	if dbRepo, ok := s.repo.(repository.RepoDB); ok {
 		var urlsDB []*repository.URL
@@ -23,6 +23,7 @@ func (s *ServiceImpl) SaveURLsBatch(ctx context.Context, urls []*URLInBatch) ([]
 			urlsDB = append(urlsDB, &repository.URL{
 				ShortURL:    shortURL,
 				OriginalURL: url.OriginalURL,
+				UserID:      userID,
 			})
 
 			newURLs = append(newURLs, &URLInBatch{

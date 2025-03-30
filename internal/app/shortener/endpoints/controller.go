@@ -36,6 +36,7 @@ func (c *Controller) InitHandlers() {
 			c.service,
 			middleware.Logging,
 			middleware.GzipMiddleware,
+			middleware.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
@@ -73,6 +74,7 @@ func (c *Controller) InitHandlers() {
 			c.service,
 			middleware.Logging,
 			middleware.GzipMiddleware,
+			middleware.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
@@ -91,6 +93,7 @@ func (c *Controller) InitHandlers() {
 			c.lg,
 			c.service,
 			middleware.Logging,
+			middleware.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
