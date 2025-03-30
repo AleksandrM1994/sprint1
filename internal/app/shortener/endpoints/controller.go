@@ -106,6 +106,16 @@ func (c *Controller) InitHandlers() {
 			middleware.Authenticate,
 		),
 	).Methods("GET")
+	c.router.Handle(
+		"/api/user/urls",
+		applyMiddlewares(
+			http.HandlerFunc(c.DeleteUserURLs),
+			c.lg,
+			c.service,
+			middleware.Logging,
+			middleware.Authenticate,
+		),
+	).Methods("DELETE")
 }
 
 func (c *Controller) GetServeMux() *mux.Router {

@@ -16,6 +16,7 @@ type Service interface {
 	AuthenticateUser(ctx context.Context, login, password string) (*repository.User, error)
 	CheckCookie(ctx context.Context, cookie string) (string, error)
 	GetUserURLs(ctx context.Context, userID string) ([]*UserURLs, error)
+	DeleteUserURLs(ctx context.Context, userID string, urls []string) (chan error, error)
 
 	HashData(data []byte) (string, error)
 }

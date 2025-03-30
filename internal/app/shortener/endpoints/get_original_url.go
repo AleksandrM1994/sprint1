@@ -2,8 +2,11 @@ package endpoints
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
+
+	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
 func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Request) {
@@ -13,6 +16,10 @@ func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Re
 	id := req.URL.Path[len("/"):]
 	originalURL, err := c.service.GetOriginalURL(ctx, id)
 	if err != nil {
+		if errors.Is(err, custom_errs.ErrResourceGone) {
+			res.WriteHeader(http.StatusGone)
+			return
+		}
 		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}

@@ -169,3 +169,32 @@ func (r *RepoDBImpl) GetURLsByUserID(ctx context.Context, id string) ([]*URL, er
 	}
 	return nil, fmt.Errorf("db.SelectContext: %w", errSelectContext)
 }
+
+func (r *RepoDBImpl) MakeURLsDeleted(ctx context.Context, urls []*URL) error {
+	tx, errBeginx := r.db.BeginTx(ctx, nil)
+	if errBeginx != nil {
+		return fmt.Errorf("error beginx: %w", errBeginx)
+	}
+
+	for _, url := range urls {
+		_, errExecContext := tx.ExecContext(ctx, MakeURLDeleted, url.IsDeleted, url.ShortURL)
+		if errExecContext != nil {
+			if errRollback := tx.Rollback(); errRollback != nil {
+				return fmt.Errorf("error rollback: %v", errRollback)
+			}
+			var pgErr *pq.Error
+			if ok := errors.As(errExecContext, &pgErr); ok {
+				if pgErr.Code == pgerrcode.UniqueViolation {
+					return custom_errs.ErrUniqueViolation
+				}
+			}
+			return fmt.Errorf("error make url deleted: %w", errExecContext)
+		}
+	}
+
+	if errCommit := tx.Commit(); errCommit != nil {
+		return fmt.Errorf("error commit: %w", errCommit)
+	}
+
+	return nil
+}

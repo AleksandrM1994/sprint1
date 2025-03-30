@@ -7,6 +7,7 @@ type URL struct {
 	ShortURL    string `db:"short_url"`
 	OriginalURL string `db:"original_url"`
 	UserID      string `db:"user_id"`
+	IsDeleted   bool   `db:"is_deleted"`
 }
 
 type User struct {

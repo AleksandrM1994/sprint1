@@ -16,4 +16,5 @@ type RepoDB interface {
 	UpdateUser(ctx context.Context, user *User) error
 	GetUserByID(ctx context.Context, id string) (*User, error)
 	GetURLsByUserID(ctx context.Context, id string) ([]*URL, error)
+	MakeURLsDeleted(ctx context.Context, urls []*URL) error
 }

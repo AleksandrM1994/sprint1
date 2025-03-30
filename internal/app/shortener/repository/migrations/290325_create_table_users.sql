@@ -10,5 +10,8 @@ create table if not exists users
 );
 
 ALTER TABLE urls
-    ADD COLUMN user_id VARCHAR(50)
+    ADD COLUMN user_id VARCHAR(50);
+
+ALTER TABLE urls
+    ADD COLUMN is_deleted BOOL default false;
 -- +goose StatementEnd

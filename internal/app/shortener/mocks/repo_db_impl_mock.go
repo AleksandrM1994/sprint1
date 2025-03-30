@@ -189,6 +189,20 @@ func (mr *MockRepoDBMockRecorder) GetUserByID(ctx, id interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockRepoDB)(nil).GetUserByID), ctx, id)
 }
 
+// MakeURLsDeleted mocks base method.
+func (m *MockRepoDB) MakeURLsDeleted(ctx context.Context, urls []*repository.URL) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MakeURLsDeleted", ctx, urls)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MakeURLsDeleted indicates an expected call of MakeURLsDeleted.
+func (mr *MockRepoDBMockRecorder) MakeURLsDeleted(ctx, urls interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeURLsDeleted", reflect.TypeOf((*MockRepoDB)(nil).MakeURLsDeleted), ctx, urls)
+}
+
 // Ping mocks base method.
 func (m *MockRepoDB) Ping(ctx context.Context) error {
 	m.ctrl.T.Helper()
