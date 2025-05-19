@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 
 	"github.com/sprint1/internal/app/shortener/helpers"
+	"time"
 )
 
 func HashString(s string) string {
@@ -15,6 +16,10 @@ func HashString(s string) string {
 	hashInBytes := hash.Sum(nil)
 
 	return hex.EncodeToString(hashInBytes)
+}
+
+func DatePtr(date time.Time) *time.Time {
+	return &date
 }
 
 func CreateShortURL(url string) string {

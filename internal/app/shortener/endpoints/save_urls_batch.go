@@ -9,6 +9,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/sprint1/internal/app/shortener/endpoints/middleware"
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
@@ -44,7 +45,13 @@ func (c *Controller) SaveURLsBatch(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	newURLs, errSaveURL := c.service.SaveURLsBatch(ctx, urls)
+	userIDValue := ctx.Value(middleware.UserID)
+	userID, ok := userIDValue.(string)
+	if !ok {
+		userID = ""
+	}
+
+	newURLs, errSaveURL := c.service.SaveURLsBatch(ctx, urls, userID)
 	if errSaveURL != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		http.Error(res, errSaveURL.Error(), http.StatusInternalServerError)

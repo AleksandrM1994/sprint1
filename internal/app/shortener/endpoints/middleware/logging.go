@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+
+	"github.com/sprint1/internal/app/shortener/service"
 )
 
 type ResponseWriterWrapper struct {
@@ -18,7 +20,7 @@ func (rw *ResponseWriterWrapper) WriteHeader(code int) {
 	rw.ResponseWriter.WriteHeader(code)
 }
 
-func Logging(lg *zap.SugaredLogger, next http.Handler) http.Handler {
+func Logging(lg *zap.SugaredLogger, s service.Service, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 

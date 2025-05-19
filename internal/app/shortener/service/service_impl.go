@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/gorilla/securecookie"
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
@@ -8,11 +9,20 @@ import (
 )
 
 type ServiceImpl struct {
-	lg   *zap.SugaredLogger
-	cfg  config.Config
-	repo repository.RepoBase
+	lg     *zap.SugaredLogger
+	cfg    config.Config
+	repo   repository.RepoBase
+	cookie *securecookie.SecureCookie
 }
 
 func NewService(lg *zap.SugaredLogger, cfg config.Config, repo repository.RepoBase) *ServiceImpl {
-	return &ServiceImpl{lg: lg, cfg: cfg, repo: repo}
+	serviceImpl := &ServiceImpl{lg: lg, cfg: cfg, repo: repo}
+	serviceImpl.cookie = newSecureCookie()
+	return serviceImpl
+}
+
+func newSecureCookie() *securecookie.SecureCookie {
+	var hashKey = []byte("very-very-very-very-secret-key32")
+	var blockKey = []byte("a-lot-of-secret!")
+	return securecookie.New(hashKey, blockKey)
 }

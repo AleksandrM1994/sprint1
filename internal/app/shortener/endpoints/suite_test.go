@@ -38,4 +38,5 @@ func TestEndpointSuite(t *testing.T) {
 	suite.Test_GetOriginalUrlHandler(t)
 	suite.Test_GetShortenURLHandler(t)
 	suite.Test_PingHandler(t)
+	suite.Test_CreateUserHandler(t)
 }

@@ -6,14 +6,20 @@ import (
 	"fmt"
 
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
+	"github.com/sprint1/internal/app/shortener/repository"
 )
 
-func (s *ServiceImpl) SaveURL(ctx context.Context, url string) (string, error) {
+func (s *ServiceImpl) SaveURL(ctx context.Context, url, userID string) (string, error) {
 	shortURL := CreateShortURL(url)
 
-	s.lg.Infow("SaveURL request", "url", url, "shortURL", shortURL)
+	s.lg.Infow("SaveURL request", "url", url, "shortURL", shortURL, "userID", userID)
 
-	errCreateURL := s.repo.CreateURL(ctx, shortURL, url)
+	dbRepo, ok := s.repo.(repository.RepoDB)
+	if !ok {
+		return "", errors.New("failed to cast repo to repo.DB")
+	}
+
+	errCreateURL := dbRepo.CreateURL(ctx, shortURL, url, userID)
 	if errCreateURL != nil {
 		if errors.Is(errCreateURL, custom_errs.ErrUniqueViolation) {
 			urlDB, errGetURLByShortURL := s.repo.GetURLByShortURL(ctx, shortURL)
@@ -29,6 +35,8 @@ func (s *ServiceImpl) SaveURL(ctx context.Context, url string) (string, error) {
 	if errGetURLByShortURL != nil {
 		return "", fmt.Errorf("repo.GetURLByShortURL: %v", errGetURLByShortURL)
 	}
+
+	s.lg.Infow("saved url in db", "url", urlDB)
 
 	errInsertURLInFile := s.InsertURLInFile(&URLInfo{
 		UUID:        urlDB.ID,
