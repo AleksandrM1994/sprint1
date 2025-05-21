@@ -11,14 +11,17 @@ import (
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
+// GetShortenURLRequest запрос по ручке получения сокращенного урла
 type GetShortenURLRequest struct {
 	URL string `json:"url"`
 }
 
+// GetShortenURLResponse ответ по ручке получения сокращенного урла
 type GetShortenURLResponse struct {
 	Result string `json:"result"`
 }
 
+// GetShortenURLHandler ручка получения сокращенного урла
 func (c *Controller) GetShortenURLHandler(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()

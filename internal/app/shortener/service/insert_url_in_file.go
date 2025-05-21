@@ -5,12 +5,14 @@ import (
 	"os"
 )
 
+// URLInfo структура с информацией об урлах
 type URLInfo struct {
 	UUID        int64  `json:"uuid"`
 	ShortURL    string `json:"short_url"`
 	OriginalURL string `json:"original_url"`
 }
 
+// InsertURLInFile сервисная функция для записи урлов в БД
 func (s *ServiceImpl) InsertURLInFile(URLInfo *URLInfo) error {
 	data, err := json.Marshal(URLInfo)
 	if err != nil {

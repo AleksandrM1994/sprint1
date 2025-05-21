@@ -10,11 +10,13 @@ import (
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
+// GetUserURLsResponse ответ по ручке по получению урлов пользователя
 type GetUserURLsResponse struct {
 	OriginalURL string `json:"original_url,omitempty"`
 	ShortURL    string `json:"short_url,omitempty"`
 }
 
+// GetUserURLs ручка по получению урлов пользователя
 func (c *Controller) GetUserURLs(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()
@@ -49,6 +51,7 @@ func (c *Controller) GetUserURLs(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// mappingGetUserURLsResponse маппинг ответа по ручке по получению урлов пользователя
 func mappingGetUserURLsResponse(urls []*service.UserURLs) []*GetUserURLsResponse {
 	res := make([]*GetUserURLsResponse, 0)
 	for _, url := range urls {

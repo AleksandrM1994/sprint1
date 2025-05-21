@@ -7,17 +7,20 @@ import (
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
+// RepoMemoryImpl структура по работе с внутренней памятью
 type RepoMemoryImpl struct {
 	urlStorage map[string]string
 	mu         sync.Mutex
 }
 
+// NewRepoMemoryImpl создание структуры по работе с внутренней памятью
 func NewRepoMemoryImpl() *RepoMemoryImpl {
 	return &RepoMemoryImpl{
 		urlStorage: make(map[string]string),
 	}
 }
 
+// CreateURL создание урла во внутренней памяти
 func (r *RepoMemoryImpl) CreateURL(ctx context.Context, shortURL, originalURL, userID string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -30,6 +33,7 @@ func (r *RepoMemoryImpl) CreateURL(ctx context.Context, shortURL, originalURL, u
 	return nil
 }
 
+// GetURLByShortURL получение урла из внутренней памяти
 func (r *RepoMemoryImpl) GetURLByShortURL(ctx context.Context, shortURL string) (*URL, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()

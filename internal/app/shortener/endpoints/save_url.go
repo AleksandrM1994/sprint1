@@ -11,6 +11,7 @@ import (
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
+// SaveURLHandler ручка по сохранению урла
 func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()
