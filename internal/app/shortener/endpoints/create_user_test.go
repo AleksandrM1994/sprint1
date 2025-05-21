@@ -69,3 +69,37 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler(t *testing.T) {
 		})
 	}
 }
+
+func (suite *EndpointsTestSuite) Benchmark_CreateUserHandler(b *testing.B) {
+	type Request struct {
+		method string
+		url    string
+		body   *CreateUserRequest
+	}
+
+	// Подготовка запроса
+	request := Request{
+		method: http.MethodPost,
+		url:    "http://localhost:8080/api/user/create",
+		body: &CreateUserRequest{
+			Login: "amakarkin",
+		},
+	}
+
+	body, _ := json.Marshal(request.body)
+	r := httptest.NewRequest(request.method, request.url, strings.NewReader(string(body)))
+	w := httptest.NewRecorder()
+
+	// Настройка ожиданий для моков
+	suite.repo.EXPECT().CreateUser(
+		gomock.Any(),
+		gomock.Any(),
+		"2/dkyU+GGwHFGIZE5261413Wy2lmdg5gHf6tq+sT87c=",
+		gomock.Any(),
+	).Return(nil).MaxTimes(1)
+
+	// Запуск бенчмарка
+	for i := 0; i < b.N; i++ {
+		suite.controller.GetServeMux().ServeHTTP(w, r)
+	}
+}

@@ -4,8 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	"github.com/sprint1/internal/app/shortener/helpers"
 	"time"
+
+	"github.com/sprint1/internal/app/shortener/helpers"
 )
 
 func HashString(s string) string {

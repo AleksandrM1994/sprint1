@@ -34,17 +34,11 @@ func (c *Controller) DeleteUserURLs(res http.ResponseWriter, req *http.Request) 
 		return
 	}
 
-	errChan, errDeleteUserURLs := c.service.DeleteUserURLs(ctx, userID, urlsForDelete)
+	errDeleteUserURLs := c.service.DeleteUserURLs(ctx, userID, urlsForDelete)
 	if errDeleteUserURLs != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		http.Error(res, errDeleteUserURLs.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	for err := range errChan {
-		if err != nil {
-			c.lg.Errorw("DeleteUserURLs", "err", err)
-		}
 	}
 
 	res.WriteHeader(http.StatusAccepted)

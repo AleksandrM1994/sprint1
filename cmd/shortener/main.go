@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	_ "net/http/pprof"
 
 	"go.uber.org/zap"
 
@@ -9,12 +10,13 @@ import (
 	"github.com/sprint1/internal/app/shortener/endpoints"
 	"github.com/sprint1/internal/app/shortener/repository"
 	"github.com/sprint1/internal/app/shortener/service"
+	"github.com/sprint1/internal/app/shortener/workers"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
-func main() {
+func runShortener() {
 	logger, loggerErr := zap.NewDevelopment()
 	if loggerErr != nil {
 		panic("cannot initialize zap")
@@ -35,11 +37,24 @@ func main() {
 		lg.Fatal("repository.SelectRepo:", errSelectRepo)
 	}
 
-	serviceImpl := service.NewService(lg, cfg, repo)
+	workerPool := workers.NewWorkerPool(3, repo)
+	workerPool.Start()
+	workerPool.Close()
+
+	serviceImpl := service.NewService(lg, cfg, repo, workerPool)
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
+
 	errListenAndServe := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
 	if errListenAndServe != nil {
 		lg.Fatal("http.ListenAndServe:", errListenAndServe)
+	}
+}
+
+func main() {
+	go runShortener()
+	err := http.ListenAndServe(":8081", nil) //nolint:gosec // timeout is not important for profiling, I think
+	if err != nil {
+		return
 	}
 }
