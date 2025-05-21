@@ -1,4 +1,4 @@
-package endpoints
+package tests
 
 import (
 	"encoding/json"
@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/sprint1/internal/app/shortener/endpoints"
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
@@ -20,12 +21,12 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 	type Request struct {
 		method string
 		url    string
-		body   *GetShortenURLRequest
+		body   *endpoints.GetShortenURLRequest
 	}
 
 	type Expected struct {
 		code        int
-		response    *GetShortenURLResponse
+		response    *endpoints.GetShortenURLResponse
 		contentType string
 	}
 	tests := []struct {
@@ -38,13 +39,13 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
-				body: &GetShortenURLRequest{
+				body: &endpoints.GetShortenURLRequest{
 					URL: "https://duckduckgo.com",
 				},
 			},
 			expected: Expected{
 				code: http.StatusCreated,
-				response: &GetShortenURLResponse{
+				response: &endpoints.GetShortenURLResponse{
 					Result: "http://localhost:8080/c489a87f9b3b",
 				},
 				contentType: "application/json",
@@ -55,7 +56,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
-				body:   &GetShortenURLRequest{},
+				body:   &endpoints.GetShortenURLRequest{},
 			},
 			expected: Expected{
 				code:        http.StatusBadRequest,
@@ -97,7 +98,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler(t *testing.T) {
 			if result.StatusCode == http.StatusCreated {
 				resBody, err := io.ReadAll(result.Body)
 				require.NoError(t, err, "error reading response body")
-				res := &GetShortenURLResponse{}
+				res := &endpoints.GetShortenURLResponse{}
 				_ = json.Unmarshal(resBody, res)
 				assert.Equal(t, test.expected.response, res, "unexpected response body")
 			}

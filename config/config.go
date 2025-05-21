@@ -1,3 +1,4 @@
+// config - пакет с настройками микросервиса
 package config
 
 import (
@@ -5,17 +6,19 @@ import (
 	"os"
 )
 
+// Config - структура с переменными, в которые будут записаны конфиги
 type Config struct {
-	HTTPAddress        string
-	BaseShortURL       string
-	FileStoragePath    string
-	DNS                string
-	HashSecret         string
-	AuthUserCookieName string
+	HTTPAddress        string // адрес, на котором будет доступен микросервис по сети
+	BaseShortURL       string // базовый URL
+	FileStoragePath    string // путь к файлу хранилища
+	DNS                string // строка подключения к БД
+	HashSecret         string // хэш секрет
+	AuthUserCookieName string // имя куки
 }
 
 var cfg Config
 
+// Init функция инициализирующая переменные, хранящие в себе конфигурационные параметры
 func Init() Config {
 	flag.StringVar(&cfg.HTTPAddress, "a", "localhost:8080", "HTTP address")
 	flag.StringVar(&cfg.BaseShortURL, "b", "http://localhost:8080", "base short url")

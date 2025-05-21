@@ -10,6 +10,7 @@ import (
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
+// CheckCookie сервисная функция по проверке куки
 func (s *ServiceImpl) CheckCookie(ctx context.Context, cookie string) (string, error) {
 	var userID string
 	err := s.cookie.Decode(s.cfg.AuthUserCookieName, cookie, &userID)

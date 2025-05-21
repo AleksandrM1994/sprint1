@@ -13,10 +13,11 @@ import (
 )
 
 const (
-	passwordLength = 20
-	fiveNums       = 5
+	passwordLength = 20 // длина пароля
+	fiveNums       = 5  // количество символов в пароле
 )
 
+// CreateUser сервисная функция по созданию пользователя
 func (s *ServiceImpl) CreateUser(ctx context.Context, login string) (string, error) {
 	if login == "" {
 		return "", fmt.Errorf("failed validate login: %w", custom_errs.ErrValidate)

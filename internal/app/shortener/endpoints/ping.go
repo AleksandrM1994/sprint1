@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// PingHandler ручка для health check базы данных
 func (c *Controller) PingHandler(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()
