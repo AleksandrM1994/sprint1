@@ -1,4 +1,4 @@
-package endpoints
+package tests
 
 import (
 	"fmt"
@@ -67,7 +67,7 @@ func (suite *EndpointsTestSuite) Test_SaveUrlHandler(t *testing.T) {
 
 			r.AddCookie(&http.Cookie{
 				Name:  "auth_cookie",
-				Value: "MTc0Mjc2MzgyMnxKN3VTYTkyYmwzc05tYURNNzFDRFFDT3JKakxxRWRsNnJtckZrV3N6R3dCcXk4anptaWxLOV91cHRsUzc0Z2xkamZTbzdfbjNMQ2s9fNEVcpB5EfxIKduWXSW_wvOyM0TWw2k7yV9uIF8qq5K3",
+				Value: "MTc0Nzg5MzQzNHxLeWlQV2k2bjBYNm03cEZ5bXl4cFhIRjlzbkJlVE1reTloekRLZWpReHRrbzYtcTA2SXNwUWMyeXJfMC1Zd1luMUh4cEdxb195alE9fFkjI2E35AFwLWjCd8SQZwuTHMeDVVAq4nSrizBe9Xyd",
 			})
 
 			cookieFinish := time.Now().AddDate(99, 0, 0)
@@ -76,7 +76,7 @@ func (suite *EndpointsTestSuite) Test_SaveUrlHandler(t *testing.T) {
 					ID:           "b371d94a-78d2-4b8d-a5d4-d90e519b42cc",
 					Login:        "b371d94a",
 					Password:     "b371d94a",
-					Cookie:       "MTc0Mjc2MzgyMnxKN3VTYTkyYmwzc05tYURNNzFDRFFDT3JKakxxRWRsNnJtckZrV3N6R3dCcXk4anptaWxLOV91cHRsUzc0Z2xkamZTbzdfbjNMQ2s9fNEVcpB5EfxIKduWXSW_wvOyM0TWw2k7yV9uIF8qq5K3",
+					Cookie:       "MTc0Nzg5MzQzNHxLeWlQV2k2bjBYNm03cEZ5bXl4cFhIRjlzbkJlVE1reTloekRLZWpReHRrbzYtcTA2SXNwUWMyeXJfMC1Zd1luMUh4cEdxb195alE9fFkjI2E35AFwLWjCd8SQZwuTHMeDVVAq4nSrizBe9Xyd",
 					CookieFinish: &cookieFinish,
 				}, nil).MaxTimes(1)
 			suite.repo.EXPECT().CreateURL(

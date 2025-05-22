@@ -7,14 +7,17 @@ import (
 	"time"
 )
 
+// CreateUserRequest запрос для ручки по созданию пользователя
 type CreateUserRequest struct {
 	Login string `json:"login"`
 }
 
+// CreateUserResponse ответ для ручки по созданию пользователя
 type CreateUserResponse struct {
 	Password string `json:"password"`
 }
 
+// CreateUser ручка по созданию пользователя
 func (c *Controller) CreateUser(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()

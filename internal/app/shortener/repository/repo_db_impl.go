@@ -17,12 +17,14 @@ import (
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
+// RepoDBImpl - структура по работе с БД
 type RepoDBImpl struct {
 	lg  *zap.SugaredLogger
 	cfg config.Config
 	db  *sqlx.DB
 }
 
+// Connect установка соединянения с БД
 func Connect(dns string) (*sqlx.DB, error) {
 	db, errConnect := sqlx.Connect("postgres", dns)
 	if errConnect != nil {
@@ -31,9 +33,12 @@ func Connect(dns string) (*sqlx.DB, error) {
 	return db, nil
 }
 
+// эмбедед файл
+//
 //go:embed migrations/*.sql
 var embedMigrations embed.FS
 
+// Migrate функция по проливке миграций
 func Migrate(db *sqlx.DB) error {
 	goose.SetBaseFS(embedMigrations)
 
@@ -47,10 +52,12 @@ func Migrate(db *sqlx.DB) error {
 	return nil
 }
 
+// Ping - пинг БД
 func (r *RepoDBImpl) Ping(ctx context.Context) error {
 	return r.db.PingContext(ctx)
 }
 
+// CreateURL репозиторная функция по созданию урла
 func (r *RepoDBImpl) CreateURL(ctx context.Context, shortURL, originalURL, userID string) error {
 	_, errExecContext := r.db.ExecContext(ctx, CreateURL, shortURL, originalURL, userID)
 	if errExecContext == nil {
@@ -65,6 +72,7 @@ func (r *RepoDBImpl) CreateURL(ctx context.Context, shortURL, originalURL, userI
 	return fmt.Errorf("db.ExecContext:%w", errExecContext)
 }
 
+// GetURLByShortURL репозиторная функция по получению полного урла по сокращенному урлу
 func (r *RepoDBImpl) GetURLByShortURL(ctx context.Context, shortURL string) (*URL, error) {
 	url := &URL{}
 	errGet := r.db.GetContext(ctx, url, GetURLByShortURL, shortURL)
@@ -77,6 +85,7 @@ func (r *RepoDBImpl) GetURLByShortURL(ctx context.Context, shortURL string) (*UR
 	return nil, fmt.Errorf("db.GetContext: %w", errGet)
 }
 
+// CreateURLs репозиторная функция по созданию урла
 func (r *RepoDBImpl) CreateURLs(ctx context.Context, urls []*URL) error {
 	tx, errBeginx := r.db.BeginTx(ctx, nil)
 	if errBeginx != nil {
@@ -106,6 +115,7 @@ func (r *RepoDBImpl) CreateURLs(ctx context.Context, urls []*URL) error {
 	return nil
 }
 
+// CreateUser репозиторная функция по созданию пользователя
 func (r *RepoDBImpl) CreateUser(ctx context.Context, id, login, password string) error {
 	_, errExecContext := r.db.ExecContext(ctx, createUser, id, login, password)
 	if errExecContext == nil {
@@ -120,6 +130,7 @@ func (r *RepoDBImpl) CreateUser(ctx context.Context, id, login, password string)
 	return fmt.Errorf("db.ExecContext:%w", errExecContext)
 }
 
+// GetUser репозиторная функция по получению структуры пользоватля
 func (r *RepoDBImpl) GetUser(ctx context.Context, login, password string) (*User, error) {
 	user := &User{}
 	errGet := r.db.GetContext(ctx, user, getUser, login, password)
@@ -132,6 +143,7 @@ func (r *RepoDBImpl) GetUser(ctx context.Context, login, password string) (*User
 	return nil, fmt.Errorf("db.GetContext: %w", errGet)
 }
 
+// UpdateUser репозиторная функция по обновлению инфы о пользователе
 func (r *RepoDBImpl) UpdateUser(ctx context.Context, user *User) error {
 	_, errExecContext := r.db.ExecContext(ctx, updateUser, user.Cookie, user.CookieFinish, user.ID)
 	if errExecContext == nil {
@@ -146,6 +158,7 @@ func (r *RepoDBImpl) UpdateUser(ctx context.Context, user *User) error {
 	return fmt.Errorf("db.ExecContext:%w", errExecContext)
 }
 
+// GetUserByID репозиторная функция по получению пользователя по его идентификатору
 func (r *RepoDBImpl) GetUserByID(ctx context.Context, id string) (*User, error) {
 	user := &User{}
 	errGet := r.db.GetContext(ctx, user, getUserByID, id)
@@ -158,6 +171,7 @@ func (r *RepoDBImpl) GetUserByID(ctx context.Context, id string) (*User, error) 
 	return nil, fmt.Errorf("db.GetContext: %w", errGet)
 }
 
+// GetURLsByUserID репозиторная функция по получению урлов, созданных пользователем
 func (r *RepoDBImpl) GetURLsByUserID(ctx context.Context, id string) ([]*URL, error) {
 	var urls []*URL
 	errSelectContext := r.db.SelectContext(ctx, &urls, GetURLsByUserID, id)
@@ -170,6 +184,7 @@ func (r *RepoDBImpl) GetURLsByUserID(ctx context.Context, id string) ([]*URL, er
 	return nil, fmt.Errorf("db.SelectContext: %w", errSelectContext)
 }
 
+// MakeURLsDeleted репозиторная функция осуществляющая удаление урлов
 func (r *RepoDBImpl) MakeURLsDeleted(ctx context.Context, urls []*URL) error {
 	tx, errBeginx := r.db.BeginTx(ctx, nil)
 	if errBeginx != nil {

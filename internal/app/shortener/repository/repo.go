@@ -2,11 +2,13 @@ package repository
 
 import "context"
 
+// RepoBase базовый интерфейс хранилища
 type RepoBase interface {
 	CreateURL(ctx context.Context, shortURL, originalURL, userID string) error
 	GetURLByShortURL(ctx context.Context, shortURL string) (*URL, error)
 }
 
+// RepoDB интерфейс запросов в БД
 type RepoDB interface {
 	RepoBase
 	Ping(ctx context.Context) error

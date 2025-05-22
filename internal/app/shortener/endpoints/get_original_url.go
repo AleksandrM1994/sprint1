@@ -9,6 +9,7 @@ import (
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
+// GetOriginalURLHandler - ручка возвращающая оригинальный урл
 func (c *Controller) GetOriginalURLHandler(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()

@@ -10,6 +10,7 @@ import (
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
+// AuthenticateUser сервисная функция по авторизации пользователя
 func (s *ServiceImpl) AuthenticateUser(ctx context.Context, login, password string) (*repository.User, error) {
 	if login == "" {
 		return nil, fmt.Errorf("failed validate login: %w", custom_errs.ErrValidate)

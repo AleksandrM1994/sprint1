@@ -7,6 +7,7 @@ import (
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
+// GetOriginalURL сервисная функция по получению урла по его короткой версии
 func (s *ServiceImpl) GetOriginalURL(ctx context.Context, shortURL string) (string, error) {
 	s.lg.Infow("GetOriginalURL request", "shortURL", shortURL)
 	urlDB, err := s.repo.GetURLByShortURL(ctx, shortURL)
