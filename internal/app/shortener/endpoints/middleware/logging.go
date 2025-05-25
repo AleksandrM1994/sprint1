@@ -9,18 +9,21 @@ import (
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
+// ResponseWriterWrapper - структура для логирования запросов/ответов
 type ResponseWriterWrapper struct {
 	http.ResponseWriter
 	statusCode int
 	size       int
 }
 
+// WriteHeader функция для записи в ответ http кода
 func (rw *ResponseWriterWrapper) WriteHeader(code int) {
 	rw.statusCode = code
 	rw.ResponseWriter.WriteHeader(code)
 }
 
-func Logging(lg *zap.SugaredLogger, s service.Service, next http.Handler) http.Handler {
+// Logging - мидлваря, осуществляющая логирование запросов и ответов по ним
+func Logging(lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 

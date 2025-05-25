@@ -6,6 +6,7 @@ import (
 	"github.com/sprint1/config"
 )
 
+// SelectRepo функция, определяющая с каким хранилищем работать
 func SelectRepo(lg *zap.SugaredLogger, cfg config.Config) (RepoBase, error) {
 	if cfg.DNS != "" {
 		db, err := Connect(cfg.DNS)

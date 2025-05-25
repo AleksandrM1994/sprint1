@@ -13,12 +13,14 @@ import (
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
+// URLInBatch структура для урлов, которых будут сохранены в рамках одного батча
 type URLInBatch struct {
 	CorrelationID string `json:"correlation_id"`
 	OriginalURL   string `json:"original_url,omitempty"`
 	ShortURL      string `json:"short_url,omitempty"`
 }
 
+// SaveURLsBatch ручка по сохранению урлов в рамках одного батча
 func (c *Controller) SaveURLsBatch(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()

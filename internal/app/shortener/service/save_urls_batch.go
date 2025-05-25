@@ -7,12 +7,14 @@ import (
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
+// URLInBatch сервисная структура для ответа функции SaveURLsBatch
 type URLInBatch struct {
 	CorrelationID string
 	OriginalURL   string
 	ShortURL      string
 }
 
+// SaveURLsBatch сервисная функция по сохранению урлов в рамках одной транзакции
 func (s *ServiceImpl) SaveURLsBatch(ctx context.Context, urls []*URLInBatch, userID string) ([]*URLInBatch, error) {
 	var newURLs []*URLInBatch
 	if dbRepo, ok := s.repo.(repository.RepoDB); ok {

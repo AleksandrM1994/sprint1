@@ -7,11 +7,13 @@ import (
 	"time"
 )
 
+// AuthUserRequest - структура  ручки по авторизации пользователя
 type AuthUserRequest struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
 }
 
+// AuthUser ручка авторизации пользователя
 func (c *Controller) AuthUser(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(req.Context(), 30*time.Second)
 	defer cancel()
