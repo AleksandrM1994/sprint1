@@ -9,6 +9,7 @@ import (
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
+// SaveURL сервисная функция по сохранению урла
 func (s *ServiceImpl) SaveURL(ctx context.Context, url, userID string) (string, error) {
 	shortURL := CreateShortURL(url)
 

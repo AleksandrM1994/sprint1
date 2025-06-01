@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+// HashData сервисная функция по хэшированию данных
 func (s *ServiceImpl) HashData(data []byte) (string, error) {
 	hash := hmac.New(sha256.New, []byte(s.cfg.HashSecret))
 	_, err := hash.Write(data)

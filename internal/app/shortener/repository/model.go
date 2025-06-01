@@ -2,6 +2,7 @@ package repository
 
 import "time"
 
+// URL репозиторная структура урла
 type URL struct {
 	ID          int64  `db:"id"`
 	ShortURL    string `db:"short_url"`
@@ -10,6 +11,7 @@ type URL struct {
 	IsDeleted   bool   `db:"is_deleted"`
 }
 
+// User репозиторная структура пользователя
 type User struct {
 	ID           string     `db:"id"`
 	Login        string     `db:"login"`

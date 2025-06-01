@@ -12,21 +12,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Middleware func(*zap.SugaredLogger, service.Service, http.Handler) http.Handler
+// Middleware шаблон мидлвари
+type Middleware func(*zap.SugaredLogger, *service.ServiceImpl, http.Handler) http.Handler
 
+// Controller структура котроллера
 type Controller struct {
 	router  *mux.Router
-	service service.Service
+	service *service.ServiceImpl
 	cfg     config.Config
 	lg      *zap.SugaredLogger
 }
 
-func NewController(router *mux.Router, service service.Service, cfg config.Config, lg *zap.SugaredLogger) *Controller {
+// NewController функция по созданию контроллера
+func NewController(router *mux.Router, service *service.ServiceImpl, cfg config.Config, lg *zap.SugaredLogger) *Controller {
 	controller := &Controller{router: router, service: service, cfg: cfg, lg: lg}
 	controller.InitHandlers()
 	return controller
 }
 
+// InitHandlers - описание эндпоинтов, доступных для вызова
 func (c *Controller) InitHandlers() {
 	c.router.Handle(
 		"/",
@@ -118,11 +122,13 @@ func (c *Controller) InitHandlers() {
 	).Methods("DELETE")
 }
 
+// GetServeMux - возвращает экземпляр *mux.Router
 func (c *Controller) GetServeMux() *mux.Router {
 	return c.router
 }
 
-func applyMiddlewares(h http.Handler, lg *zap.SugaredLogger, s service.Service, middlewares ...Middleware) http.Handler {
+// applyMiddlewares применяет указанные мидлвари
+func applyMiddlewares(h http.Handler, lg *zap.SugaredLogger, s *service.ServiceImpl, middlewares ...Middleware) http.Handler {
 	for _, mw := range middlewares {
 		h = mw(lg, s, h)
 	}

@@ -13,13 +13,16 @@ import (
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
+// contextKey тип для хранения данных в контексте
 type contextKey string
 
+// UserID - идентификатор пользователя, который будет сохранен в контекст по итогу успешной авторизации
 const (
 	UserID contextKey = "user_id"
 )
 
-func Authenticate(lg *zap.SugaredLogger, s service.Service, next http.Handler) http.Handler {
+// Authenticate функция, отвечающая за авторизацию запросов
+func Authenticate(lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

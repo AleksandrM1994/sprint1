@@ -1,8 +1,9 @@
-package endpoints
+package tests
 
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,16 +13,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (suite *EndpointsTestSuite) Test_CreateUserHandler(t *testing.T) {
+func (suite *EndpointsTestSuite) Test_PingHandler(t *testing.T) {
 	type Request struct {
 		method string
 		url    string
-		body   *CreateUserRequest
+		body   io.Reader
 	}
 
 	type Expected struct {
-		code        int
-		contentType string
+		code int
 	}
 	tests := []struct {
 		name     string
@@ -29,17 +29,13 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler(t *testing.T) {
 		expected Expected
 	}{
 		{
-			name: "Test create user successfully",
+			name: "Test Ping successfully",
 			request: Request{
-				method: http.MethodPost,
-				url:    "http://localhost:8080/api/user/create",
-				body: &CreateUserRequest{
-					Login: "amakarkin",
-				},
+				method: http.MethodGet,
+				url:    "/ping",
 			},
 			expected: Expected{
-				code:        http.StatusCreated,
-				contentType: "application/json",
+				code: http.StatusOK,
 			},
 		},
 	}
@@ -49,12 +45,7 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler(t *testing.T) {
 			r := httptest.NewRequest(test.request.method, test.request.url, strings.NewReader(string(body)))
 			w := httptest.NewRecorder()
 
-			suite.repo.EXPECT().CreateUser(
-				gomock.Any(),
-				gomock.Any(),
-				"2/dkyU+GGwHFGIZE5261413Wy2lmdg5gHf6tq+sT87c=",
-				gomock.Any(),
-			).Return(nil).MaxTimes(1)
+			suite.repo.EXPECT().Ping(gomock.Any()).Return(nil).Times(1)
 
 			suite.controller.GetServeMux().ServeHTTP(w, r)
 

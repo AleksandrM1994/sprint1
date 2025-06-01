@@ -7,6 +7,7 @@ import (
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 
+// makeEndpointError обработчик ошибок
 func makeEndpointError(res http.ResponseWriter, err error) {
 	var httpCode int
 	switch {

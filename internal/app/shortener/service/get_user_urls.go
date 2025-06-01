@@ -9,11 +9,13 @@ import (
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
+// UserURLs структура с инфой об урле
 type UserURLs struct {
 	OriginalURL string
 	ShortURL    string
 }
 
+// GetUserURLs сервисная функция по получению урлов пользователя
 func (s *ServiceImpl) GetUserURLs(ctx context.Context, userID string) ([]*UserURLs, error) {
 	dbRepo, ok := s.repo.(repository.RepoDB)
 	if !ok {
