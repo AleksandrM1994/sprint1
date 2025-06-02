@@ -26,7 +26,6 @@ func (suite *EndpointsTestSuite) Test_AuthUserHandler(t *testing.T) {
 	type Expected struct {
 		code        int
 		contentType string
-		cookie      string
 	}
 	tests := []struct {
 		name     string

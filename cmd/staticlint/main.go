@@ -1,3 +1,9 @@
+// пакет для запуска анализаторов
+// чтобы запустить локально, нужно в среде разработки создать деплоймент, запускающий ./cmd/staticlint/main.go
+// нажать edit configuration, внутри окна конфигации найти строку program arguments и вставить в поле ввода ./...
+// так как multichecker требует входные аргументы, без них он не будет запущен
+// для расширенной конфигурации можно подсмотреть help выполнив консольную команду staticcheck -help
+// для примера можно добавить в конец какого-нибудь main.go строку os.Exit(0)
 package main
 
 import (
@@ -8,6 +14,8 @@ import (
 	"golang.org/x/tools/go/analysis/passes/shadow"
 	"golang.org/x/tools/go/analysis/passes/structtag"
 	"honnef.co/go/tools/staticcheck"
+
+	"github.com/sprint1/cmd/staticlint/analyzers"
 )
 
 func main() {
@@ -16,6 +24,7 @@ func main() {
 		shadow.Analyzer,
 		structtag.Analyzer,
 		inspect.Analyzer,
+		analyzers.OsExitAnalyzer,
 	}
 
 	// добавляем анализаторы из staticcheck, которые указаны в файле конфигурации
