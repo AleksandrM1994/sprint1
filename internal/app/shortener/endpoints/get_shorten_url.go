@@ -49,12 +49,7 @@ func (c *Controller) GetShortenURLHandler(res http.ResponseWriter, req *http.Req
 			getShortenURLResponse := GetShortenURLResponse{
 				Result: c.cfg.BaseShortURL + "/" + shortURL,
 			}
-			body, errMarshal := json.Marshal(getShortenURLResponse)
-			if errMarshal != nil {
-				res.WriteHeader(http.StatusInternalServerError)
-				http.Error(res, errMarshal.Error(), http.StatusInternalServerError)
-				return
-			}
+			body, _ := json.Marshal(getShortenURLResponse)
 			res.WriteHeader(http.StatusConflict)
 			_, errWrite := res.Write(body)
 			if errWrite != nil {
