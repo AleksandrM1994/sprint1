@@ -17,9 +17,6 @@ func makeEndpointError(res http.ResponseWriter, err error) {
 	case errors.Is(err, custom_errs.ErrNoContent):
 		httpCode = http.StatusNoContent
 		res.WriteHeader(http.StatusNoContent)
-	case errors.Is(err, custom_errs.ErrUniqueViolation):
-		httpCode = http.StatusConflict
-		res.WriteHeader(http.StatusConflict)
 	case errors.Is(err, custom_errs.ErrValidate):
 		httpCode = http.StatusBadRequest
 		res.WriteHeader(http.StatusBadRequest)

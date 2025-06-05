@@ -2,8 +2,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	_ "net/http/pprof"
+	"os/exec"
+	"strings"
 
 	"go.uber.org/zap"
 
@@ -15,6 +18,13 @@ import (
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+)
+
+// глобальные переменные с информацией о сборке
+var (
+	buildVersion = "N/A" // версия микросервиса
+	buildDate    = "N/A" // дата сборки
+	buildCommit  = "N/A" // текст коммита текущей сборки
 )
 
 func runShortener() {
@@ -52,8 +62,28 @@ func runShortener() {
 }
 
 func main() {
+	outTagVersion, err := exec.Command("git", "describe", "--tags").Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	buildVersion = strings.TrimSpace(string(outTagVersion))
+
+	outCommitMessage, err := exec.Command("git", "log", "-1", "--pretty=format:%s").Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	buildCommit = string(outCommitMessage)
+
+	outCommitDate, err := exec.Command("git", "log", "-1", "--pretty=format:%cd").Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	buildDate = string(outCommitDate)
+
+	fmt.Printf("Build version: %s\nBuild date: %s\nBuild commit: %s\n", buildVersion, buildDate, buildCommit)
+
 	go runShortener()
-	err := http.ListenAndServe(":8081", nil)
+	err = http.ListenAndServe(":8081", nil)
 	if err != nil {
 		return
 	}

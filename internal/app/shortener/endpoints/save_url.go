@@ -35,23 +35,13 @@ func (c *Controller) SaveURLHandler(res http.ResponseWriter, req *http.Request) 
 		switch {
 		case errors.Is(errSaveURL, custom_errs.ErrUniqueViolation) && shortURL != "":
 			res.WriteHeader(http.StatusConflict)
-			_, writeErr := res.Write([]byte(c.cfg.BaseShortURL + "/" + shortURL))
-			if writeErr != nil {
-				res.WriteHeader(http.StatusInternalServerError)
-				http.Error(res, writeErr.Error(), http.StatusInternalServerError)
-				return
-			}
+			_, _ = res.Write([]byte(c.cfg.BaseShortURL + "/" + shortURL))
 		case errSaveURL != nil && shortURL == "":
 			res.WriteHeader(http.StatusInternalServerError)
 			http.Error(res, errSaveURL.Error(), http.StatusInternalServerError)
 		case shortURL != "" && errSaveURL == nil:
 			res.WriteHeader(http.StatusCreated)
-			_, writeErr := res.Write([]byte(c.cfg.BaseShortURL + "/" + shortURL))
-			if writeErr != nil {
-				res.WriteHeader(http.StatusInternalServerError)
-				http.Error(res, writeErr.Error(), http.StatusInternalServerError)
-				return
-			}
+			_, _ = res.Write([]byte(c.cfg.BaseShortURL + "/" + shortURL))
 		case shortURL == "":
 			res.WriteHeader(http.StatusBadRequest)
 		default:
