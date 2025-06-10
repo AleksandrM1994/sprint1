@@ -14,6 +14,7 @@ type Config struct {
 	DNS                string // строка подключения к БД
 	HashSecret         string // хэш секрет
 	AuthUserCookieName string // имя куки
+	EnableHTTPS        bool   // флаг для включения/отключения HTTPS на веб-сервере
 }
 
 var cfg Config
@@ -26,6 +27,7 @@ func Init() Config {
 	flag.StringVar(&cfg.DNS, "d", "user=postgres password=postgres dbname=praktikum host=postgres port=5432 sslmode=disable", "db connection")
 	flag.StringVar(&cfg.HashSecret, "h", "my_secret", "hash secret")
 	flag.StringVar(&cfg.AuthUserCookieName, "c", "auth_cookie", "auth cookie name")
+	flag.BoolVar(&cfg.EnableHTTPS, "s", false, "enable https")
 
 	flag.Parse()
 
