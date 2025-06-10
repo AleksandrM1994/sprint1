@@ -2,9 +2,12 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
+	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -55,9 +58,25 @@ func runShortener() {
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
 
-	errListenAndServe := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
-	if errListenAndServe != nil {
-		lg.Fatal("http.ListenAndServe:", errListenAndServe)
+	if cfg.EnableHTTPS {
+		tlsConfig := getTLSConfig(lg)
+
+		// Создаем новый сервер с TLS конфигурацией
+		server := &http.Server{
+			Addr:      ":443",
+			Handler:   controller.GetServeMux(),
+			TLSConfig: tlsConfig,
+		}
+
+		errListenAndServeTLS := server.ListenAndServeTLS("", "")
+		if errListenAndServeTLS != nil {
+			lg.Fatal("http.ListenAndServeTLS:", errListenAndServeTLS)
+		}
+	} else {
+		errListenAndServe := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
+		if errListenAndServe != nil {
+			lg.Fatal("http.ListenAndServe:", errListenAndServe)
+		}
 	}
 }
 
@@ -86,5 +105,34 @@ func main() {
 	err = http.ListenAndServe(":8081", nil)
 	if err != nil {
 		return
+	}
+}
+
+func getTLSConfig(lg *zap.SugaredLogger) *tls.Config {
+	// Укажите пути к файлам с сертификатом и приватным ключом
+	certFilePath := "./certificate.pem"
+	privateKeyFilePath := "./private_key.pem"
+
+	// Чтение файла сертификата
+	certPEM, err := os.ReadFile(certFilePath)
+	if err != nil {
+		log.Fatalf("Error reading certificate file: %v", err)
+	}
+
+	// Чтение файла приватного ключа
+	privateKeyPEM, err := os.ReadFile(privateKeyFilePath)
+	if err != nil {
+		log.Fatalf("Error reading private key file: %v", err)
+	}
+
+	certificate, err := tls.X509KeyPair(certPEM, privateKeyPEM)
+	if err != nil {
+		lg.Fatal("Failed to parse certificate and key:", err)
+	}
+
+	// так сертификат тестовый, то по факту проверка фиктивная, так как нужен корневой сертификат
+	return &tls.Config{
+		Certificates:       []tls.Certificate{certificate},
+		InsecureSkipVerify: true,
 	}
 }
