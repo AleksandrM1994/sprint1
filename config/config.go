@@ -2,19 +2,22 @@
 package config
 
 import (
+	"encoding/json"
 	"flag"
+	"log"
 	"os"
 )
 
 // Config - структура с переменными, в которые будут записаны конфиги
 type Config struct {
-	HTTPAddress        string // адрес, на котором будет доступен микросервис по сети
-	BaseShortURL       string // базовый URL
-	FileStoragePath    string // путь к файлу хранилища
-	DNS                string // строка подключения к БД
+	HTTPAddress        string `json:"server_address"`    // адрес, на котором будет доступен микросервис по сети
+	BaseShortURL       string `json:"base_url"`          // базовый URL
+	FileStoragePath    string `json:"file_storage_path"` // путь к файлу хранилища
+	DNS                string `json:"database_dsn"`      // строка подключения к БД
 	HashSecret         string // хэш секрет
 	AuthUserCookieName string // имя куки
-	EnableHTTPS        bool   // флаг для включения/отключения HTTPS на веб-сервере
+	EnableHTTPS        bool   `json:"enable_https"` // флаг для включения/отключения HTTPS на веб-сервере
+	ConfigFile         string
 }
 
 var cfg Config
@@ -28,8 +31,13 @@ func Init() Config {
 	flag.StringVar(&cfg.HashSecret, "h", "my_secret", "hash secret")
 	flag.StringVar(&cfg.AuthUserCookieName, "c", "auth_cookie", "auth cookie name")
 	flag.BoolVar(&cfg.EnableHTTPS, "s", false, "enable https")
+	flag.StringVar(&cfg.ConfigFile, "config", "config.json", "config file name")
 
 	flag.Parse()
+
+	if err := loadConfigFromFile(cfg.ConfigFile); err != nil {
+		log.Printf("Ошибка при загрузке конфигурации из файла: %v", err)
+	}
 
 	if httpAddress := os.Getenv("SERVER_ADDRESS"); httpAddress != "" {
 		cfg.HTTPAddress = httpAddress
@@ -56,4 +64,13 @@ func Init() Config {
 	}
 
 	return cfg
+}
+
+func loadConfigFromFile(fileName string) error {
+	data, err := os.ReadFile("config/" + fileName)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(data, &cfg)
 }
