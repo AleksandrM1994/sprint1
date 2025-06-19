@@ -2,6 +2,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"log"
@@ -9,7 +10,10 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
+	"syscall"
+	"time"
 
 	"go.uber.org/zap"
 
@@ -58,11 +62,12 @@ func runShortener() {
 	router := mux.NewRouter()
 	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
 
+	var server *http.Server
 	if cfg.EnableHTTPS {
 		tlsConfig := getTLSConfig(lg)
 
 		// Создаем новый сервер с TLS конфигурацией
-		server := &http.Server{
+		server = &http.Server{
 			Addr:      ":443",
 			Handler:   controller.GetServeMux(),
 			TLSConfig: tlsConfig,
@@ -70,13 +75,35 @@ func runShortener() {
 
 		errListenAndServeTLS := server.ListenAndServeTLS("", "")
 		if errListenAndServeTLS != nil {
-			lg.Fatal("http.ListenAndServeTLS:", errListenAndServeTLS)
+			lg.Fatal("server.ListenAndServeTLS:", errListenAndServeTLS)
 		}
 	} else {
-		errListenAndServe := http.ListenAndServe(cfg.HTTPAddress, controller.GetServeMux())
-		if errListenAndServe != nil {
-			lg.Fatal("http.ListenAndServe:", errListenAndServe)
+		// Создаем новый HTTP сервер
+		server = &http.Server{
+			Addr:    cfg.HTTPAddress,
+			Handler: controller.GetServeMux(),
 		}
+		errListenAndServe := server.ListenAndServe()
+		if errListenAndServe != nil {
+			lg.Fatal("server.ListenAndServe:", errListenAndServe)
+		}
+	}
+
+	// Создание канала для перехвата сигналов
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
+
+	// Ожидание сигнала
+	sig := <-signalChan
+	log.Printf("Получен сигнал: %s. Начинаем завершение работы...", sig)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Завершение работы сервера
+	err := server.Shutdown(ctx)
+	if err != nil {
+		log.Fatalf("server.Shutdown: %v", err)
 	}
 }
 

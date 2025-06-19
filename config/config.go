@@ -24,6 +24,10 @@ var cfg Config
 
 // Init функция инициализирующая переменные, хранящие в себе конфигурационные параметры
 func Init() Config {
+	if err := loadConfigFromFile(cfg.ConfigFile); err != nil {
+		log.Printf("Ошибка при загрузке конфигурации из файла: %v", err)
+	}
+
 	flag.StringVar(&cfg.HTTPAddress, "a", "localhost:8080", "HTTP address")
 	flag.StringVar(&cfg.BaseShortURL, "b", "http://localhost:8080", "base short url")
 	flag.StringVar(&cfg.FileStoragePath, "f", "./urls.txt", "file path")
@@ -34,10 +38,6 @@ func Init() Config {
 	flag.StringVar(&cfg.ConfigFile, "config", "config.json", "config file name")
 
 	flag.Parse()
-
-	if err := loadConfigFromFile(cfg.ConfigFile); err != nil {
-		log.Printf("Ошибка при загрузке конфигурации из файла: %v", err)
-	}
 
 	if httpAddress := os.Getenv("SERVER_ADDRESS"); httpAddress != "" {
 		cfg.HTTPAddress = httpAddress
