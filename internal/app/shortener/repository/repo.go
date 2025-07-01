@@ -19,4 +19,5 @@ type RepoDB interface {
 	GetUserByID(ctx context.Context, id string) (*User, error)
 	GetURLsByUserID(ctx context.Context, id string) ([]*URL, error)
 	MakeURLsDeleted(ctx context.Context, urls []*URL) error
+	GetStats(ctx context.Context) (uint32, uint32, error)
 }

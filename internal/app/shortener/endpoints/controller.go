@@ -119,6 +119,15 @@ func (c *Controller) InitHandlers() {
 			middleware.Authenticate,
 		),
 	).Methods("DELETE")
+	c.router.Handle(
+		"/api/internal/stats",
+		applyMiddlewares(
+			http.HandlerFunc(c.GetStatsHandler),
+			c.lg,
+			c.service,
+			middleware.Logging,
+		),
+	).Methods("GET")
 }
 
 // GetServeMux - возвращает экземпляр *mux.Router
