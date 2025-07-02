@@ -13,7 +13,7 @@ import (
 )
 
 // Middleware шаблон мидлвари
-type Middleware func(*zap.SugaredLogger, *service.ServiceImpl, http.Handler) http.Handler
+type Middleware func(config.Config, *zap.SugaredLogger, *service.ServiceImpl, http.Handler) http.Handler
 
 // Controller структура котроллера
 type Controller struct {
@@ -36,6 +36,7 @@ func (c *Controller) InitHandlers() {
 		"/",
 		applyMiddlewares(
 			http.HandlerFunc(c.SaveURLHandler),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -47,6 +48,7 @@ func (c *Controller) InitHandlers() {
 		"/ping",
 		applyMiddlewares(
 			http.HandlerFunc(c.PingHandler),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -55,6 +57,7 @@ func (c *Controller) InitHandlers() {
 	c.router.Handle("/{id}",
 		applyMiddlewares(
 			http.HandlerFunc(c.GetOriginalURLHandler),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -64,6 +67,7 @@ func (c *Controller) InitHandlers() {
 		"/api/shorten",
 		applyMiddlewares(
 			http.HandlerFunc(c.GetShortenURLHandler),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -74,6 +78,7 @@ func (c *Controller) InitHandlers() {
 		"/api/shorten/batch",
 		applyMiddlewares(
 			http.HandlerFunc(c.SaveURLsBatch),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -84,6 +89,7 @@ func (c *Controller) InitHandlers() {
 		"/api/user/create",
 		applyMiddlewares(
 			http.HandlerFunc(c.CreateUser),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -93,6 +99,7 @@ func (c *Controller) InitHandlers() {
 		"/api/user/auth",
 		applyMiddlewares(
 			http.HandlerFunc(c.AuthUser),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -103,6 +110,7 @@ func (c *Controller) InitHandlers() {
 		"/api/user/urls",
 		applyMiddlewares(
 			http.HandlerFunc(c.GetUserURLs),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -113,6 +121,7 @@ func (c *Controller) InitHandlers() {
 		"/api/user/urls",
 		applyMiddlewares(
 			http.HandlerFunc(c.DeleteUserURLs),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
@@ -123,9 +132,11 @@ func (c *Controller) InitHandlers() {
 		"/api/internal/stats",
 		applyMiddlewares(
 			http.HandlerFunc(c.GetStatsHandler),
+			c.cfg,
 			c.lg,
 			c.service,
 			middleware.Logging,
+			middleware.Resolver,
 		),
 	).Methods("GET")
 }
@@ -136,9 +147,9 @@ func (c *Controller) GetServeMux() *mux.Router {
 }
 
 // applyMiddlewares применяет указанные мидлвари
-func applyMiddlewares(h http.Handler, lg *zap.SugaredLogger, s *service.ServiceImpl, middlewares ...Middleware) http.Handler {
+func applyMiddlewares(h http.Handler, cfg config.Config, lg *zap.SugaredLogger, s *service.ServiceImpl, middlewares ...Middleware) http.Handler {
 	for _, mw := range middlewares {
-		h = mw(lg, s, h)
+		h = mw(cfg, lg, s, h)
 	}
 	return h
 }

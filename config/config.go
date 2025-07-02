@@ -32,12 +32,12 @@ func Init() Config {
 	flag.StringVar(&cfg.HTTPAddress, "a", "localhost:8080", "HTTP address")
 	flag.StringVar(&cfg.BaseShortURL, "b", "http://localhost:8080", "base short url")
 	flag.StringVar(&cfg.FileStoragePath, "f", "./urls.txt", "file path")
-	flag.StringVar(&cfg.DNS, "d", "user=postgres password=postgres dbname=praktikum host=localhost port=5432 sslmode=disable", "db connection")
+	flag.StringVar(&cfg.DNS, "d", "user=postgres password=postgres dbname=praktikum host=postgres port=5432 sslmode=disable", "db connection")
 	flag.StringVar(&cfg.HashSecret, "h", "my_secret", "hash secret")
 	flag.StringVar(&cfg.AuthUserCookieName, "c", "auth_cookie", "auth cookie name")
 	flag.BoolVar(&cfg.EnableHTTPS, "s", false, "enable https")
 	flag.StringVar(&cfg.ConfigFile, "config", "config.json", "config file name")
-	flag.StringVar(&cfg.TrustedSubnet, "t", "", "string CIDR")
+	flag.StringVar(&cfg.TrustedSubnet, "t", "127.0.0.1/24", "string CIDR")
 
 	flag.Parse()
 

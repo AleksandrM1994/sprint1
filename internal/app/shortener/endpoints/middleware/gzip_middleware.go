@@ -6,11 +6,12 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/sprint1/config"
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
 // GzipMiddleware мидлваря для работы со сжатыми данными
-func GzipMiddleware(lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
+func GzipMiddleware(cfg config.Config, lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// по умолчанию устанавливаем оригинальный http.ResponseWriter как тот,
 		// который будем передавать следующей функции
