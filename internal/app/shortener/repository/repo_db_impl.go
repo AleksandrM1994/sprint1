@@ -213,3 +213,20 @@ func (r *RepoDBImpl) MakeURLsDeleted(ctx context.Context, urls []*URL) error {
 
 	return nil
 }
+
+// GetStats репозиторная функция по получению статистики
+func (r *RepoDBImpl) GetStats(ctx context.Context) (uint32, uint32, error) {
+	var usersCount uint32
+	errGetUsersCount := r.db.GetContext(ctx, &usersCount, GetUsersCount)
+	if errGetUsersCount != nil {
+		return 0, 0, fmt.Errorf("db.GetContext: %w", errGetUsersCount)
+	}
+
+	var urlsCount uint32
+	errGetURLsCount := r.db.GetContext(ctx, &urlsCount, GetURLsCount)
+	if errGetURLsCount != nil {
+		return 0, 0, fmt.Errorf("db.GetContext: %w", errGetURLsCount)
+	}
+
+	return usersCount, urlsCount, nil
+}

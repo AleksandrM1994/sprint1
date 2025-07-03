@@ -18,4 +18,8 @@ const (
 	GetURLsByUserID = "select id, short_url, original_url, user_id, is_deleted from urls where user_id = $1"
 	// запрос по удалению урлов по их соращенной версии
 	MakeURLDeleted = "update urls set is_deleted = $1 where short_url = $2"
+	// запрос по получению количества пользователей
+	GetUsersCount = "select count(*) from users"
+	// запрос по получению количества сокреащенных урлов
+	GetURLsCount = "select count(*) from urls"
 )

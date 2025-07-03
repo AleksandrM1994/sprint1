@@ -12,7 +12,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 	"github.com/sprint1/internal/app/shortener/repository"
 )
@@ -21,7 +21,7 @@ func (suite *EndpointsTestSuite) Test_AuthUserHandler_Success(t *testing.T) {
 	type Request struct {
 		method string
 		url    string
-		body   *endpoints.AuthUserRequest
+		body   *public.AuthUserRequest
 	}
 
 	type Expected struct {
@@ -38,7 +38,7 @@ func (suite *EndpointsTestSuite) Test_AuthUserHandler_Success(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/user/auth",
-				body: &endpoints.AuthUserRequest{
+				body: &public.AuthUserRequest{
 					Login:    "test",
 					Password: "test",
 				},
@@ -106,7 +106,7 @@ func (suite *EndpointsTestSuite) Test_AuthUserHandler_UserNoFound(t *testing.T) 
 	type Request struct {
 		method string
 		url    string
-		body   *endpoints.AuthUserRequest
+		body   *public.AuthUserRequest
 	}
 
 	type Expected struct {
@@ -123,7 +123,7 @@ func (suite *EndpointsTestSuite) Test_AuthUserHandler_UserNoFound(t *testing.T) 
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/user/auth",
-				body: &endpoints.AuthUserRequest{
+				body: &public.AuthUserRequest{
 					Login:    "test",
 					Password: "test",
 				},

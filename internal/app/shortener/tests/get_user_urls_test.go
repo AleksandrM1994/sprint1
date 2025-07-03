@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 	"github.com/sprint1/internal/app/shortener/repository"
 )
@@ -27,7 +27,7 @@ func (suite *EndpointsTestSuite) Test_GetUserUrlsHandler_Success(t *testing.T) {
 	type Expected struct {
 		code        int
 		contentType string
-		response    []*endpoints.GetUserURLsResponse
+		response    []*public.GetUserURLsResponse
 	}
 	tests := []struct {
 		name     string
@@ -43,7 +43,7 @@ func (suite *EndpointsTestSuite) Test_GetUserUrlsHandler_Success(t *testing.T) {
 			expected: Expected{
 				code:        http.StatusOK,
 				contentType: "application/json",
-				response: []*endpoints.GetUserURLsResponse{
+				response: []*public.GetUserURLsResponse{
 					{
 						OriginalURL: "https://go.dev",
 						ShortURL:    "http://localhost:8080/6e7f58f6b868",
@@ -99,7 +99,7 @@ func (suite *EndpointsTestSuite) Test_GetUserUrlsHandler_Success(t *testing.T) {
 			if result.StatusCode == http.StatusCreated {
 				resBody, err := io.ReadAll(result.Body)
 				require.NoError(t, err, "error reading response body")
-				var res []*endpoints.GetUserURLsResponse
+				var res []*public.GetUserURLsResponse
 				_ = json.Unmarshal(resBody, &res)
 				assert.Equal(t, test.expected.response, res, "unexpected response body")
 			}
@@ -116,7 +116,7 @@ func (suite *EndpointsTestSuite) Test_GetUserUrlsHandler_NoContent(t *testing.T)
 	type Expected struct {
 		code        int
 		contentType string
-		response    []*endpoints.GetUserURLsResponse
+		response    []*public.GetUserURLsResponse
 	}
 	tests := []struct {
 		name     string

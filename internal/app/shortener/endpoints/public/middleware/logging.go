@@ -6,6 +6,7 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/sprint1/config"
 	"github.com/sprint1/internal/app/shortener/service"
 )
 
@@ -23,7 +24,7 @@ func (rw *ResponseWriterWrapper) WriteHeader(code int) {
 }
 
 // Logging - мидлваря, осуществляющая логирование запросов и ответов по ним
-func Logging(lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
+func Logging(cfg config.Config, lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 

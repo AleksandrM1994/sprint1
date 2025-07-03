@@ -1,4 +1,4 @@
-package endpoints
+package public
 
 import (
 	"net/http"
@@ -6,14 +6,14 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
-	"github.com/sprint1/internal/app/shortener/endpoints/middleware"
+	middleware2 "github.com/sprint1/internal/app/shortener/endpoints/public/middleware"
 	"github.com/sprint1/internal/app/shortener/service"
 
 	"github.com/gorilla/mux"
 )
 
 // Middleware шаблон мидлвари
-type Middleware func(*zap.SugaredLogger, *service.ServiceImpl, http.Handler) http.Handler
+type Middleware func(config.Config, *zap.SugaredLogger, *service.ServiceImpl, http.Handler) http.Handler
 
 // Controller структура котроллера
 type Controller struct {
@@ -36,89 +36,109 @@ func (c *Controller) InitHandlers() {
 		"/",
 		applyMiddlewares(
 			http.HandlerFunc(c.SaveURLHandler),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.GzipMiddleware,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.GzipMiddleware,
+			middleware2.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
 		"/ping",
 		applyMiddlewares(
 			http.HandlerFunc(c.PingHandler),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
+			middleware2.Logging,
 		),
 	).Methods("GET")
 	c.router.Handle("/{id}",
 		applyMiddlewares(
 			http.HandlerFunc(c.GetOriginalURLHandler),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
+			middleware2.Logging,
 		),
 	).Methods("GET")
 	c.router.Handle(
 		"/api/shorten",
 		applyMiddlewares(
 			http.HandlerFunc(c.GetShortenURLHandler),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.GzipMiddleware,
+			middleware2.Logging,
+			middleware2.GzipMiddleware,
 		),
 	).Methods("POST")
 	c.router.Handle(
 		"/api/shorten/batch",
 		applyMiddlewares(
 			http.HandlerFunc(c.SaveURLsBatch),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
 		"/api/user/create",
 		applyMiddlewares(
 			http.HandlerFunc(c.CreateUser),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
+			middleware2.Logging,
 		),
 	).Methods("POST")
 	c.router.Handle(
 		"/api/user/auth",
 		applyMiddlewares(
 			http.HandlerFunc(c.AuthUser),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
 		"/api/user/urls",
 		applyMiddlewares(
 			http.HandlerFunc(c.GetUserURLs),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("GET")
 	c.router.Handle(
 		"/api/user/urls",
 		applyMiddlewares(
 			http.HandlerFunc(c.DeleteUserURLs),
+			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("DELETE")
+	c.router.Handle(
+		"/api/internal/stats",
+		applyMiddlewares(
+			http.HandlerFunc(c.GetStatsHandler),
+			c.cfg,
+			c.lg,
+			c.service,
+			middleware2.Logging,
+			middleware2.Resolver,
+		),
+	).Methods("GET")
 }
 
 // GetServeMux - возвращает экземпляр *mux.Router
@@ -127,9 +147,9 @@ func (c *Controller) GetServeMux() *mux.Router {
 }
 
 // applyMiddlewares применяет указанные мидлвари
-func applyMiddlewares(h http.Handler, lg *zap.SugaredLogger, s *service.ServiceImpl, middlewares ...Middleware) http.Handler {
+func applyMiddlewares(h http.Handler, cfg config.Config, lg *zap.SugaredLogger, s *service.ServiceImpl, middlewares ...Middleware) http.Handler {
 	for _, mw := range middlewares {
-		h = mw(lg, s, h)
+		h = mw(cfg, lg, s, h)
 	}
 	return h
 }

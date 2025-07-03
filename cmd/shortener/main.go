@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -16,9 +17,13 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 
 	"github.com/sprint1/config"
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/private"
+	"github.com/sprint1/internal/app/shortener/endpoints/private/interceptor"
+	pb "github.com/sprint1/internal/app/shortener/endpoints/private/proto"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 	"github.com/sprint1/internal/app/shortener/repository"
 	"github.com/sprint1/internal/app/shortener/service"
 	"github.com/sprint1/internal/app/shortener/workers"
@@ -60,7 +65,24 @@ func runShortener() {
 
 	serviceImpl := service.NewService(lg, cfg, repo, workerPool)
 	router := mux.NewRouter()
-	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
+	controller := public.NewController(router, serviceImpl, cfg, lg)
+
+	// определяем порт для сервера
+	listen, errListen := net.Listen("tcp", ":8082")
+	if errListen != nil {
+		log.Fatal(errListen)
+	}
+
+	g := grpc.NewServer(grpc.UnaryInterceptor(interceptor.AuthInterceptor))
+
+	privateController := private.NewController(serviceImpl, cfg, lg)
+
+	// регистрируем сервис
+	pb.RegisterShortenerServer(g, privateController)
+
+	if errServe := g.Serve(listen); errServe != nil {
+		log.Fatal(errServe)
+	}
 
 	var server *http.Server
 	if cfg.EnableHTTPS {

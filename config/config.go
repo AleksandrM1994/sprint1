@@ -18,6 +18,7 @@ type Config struct {
 	AuthUserCookieName string // имя куки
 	EnableHTTPS        bool   `json:"enable_https"` // флаг для включения/отключения HTTPS на веб-сервере
 	ConfigFile         string
+	TrustedSubnet      string `json:"trusted_subnet"`
 }
 
 var cfg Config
@@ -36,6 +37,7 @@ func Init() Config {
 	flag.StringVar(&cfg.AuthUserCookieName, "c", "auth_cookie", "auth cookie name")
 	flag.BoolVar(&cfg.EnableHTTPS, "s", false, "enable https")
 	flag.StringVar(&cfg.ConfigFile, "config", "config.json", "config file name")
+	flag.StringVar(&cfg.TrustedSubnet, "t", "127.0.0.1/24", "string CIDR")
 
 	flag.Parse()
 
@@ -61,6 +63,10 @@ func Init() Config {
 
 	if authUserCookieName := os.Getenv("AUTH_USER_COOKIE_NAME"); authUserCookieName != "" {
 		cfg.AuthUserCookieName = authUserCookieName
+	}
+
+	if trustedSubnet := os.Getenv("TRUSTED_SUBNET"); trustedSubnet != "" {
+		cfg.TrustedSubnet = trustedSubnet
 	}
 
 	return cfg

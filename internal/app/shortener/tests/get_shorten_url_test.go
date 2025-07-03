@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 	"github.com/sprint1/internal/app/shortener/repository"
 )
@@ -28,7 +28,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_Success(t *testing.T)
 
 	type Expected struct {
 		code        int
-		response    *endpoints.GetShortenURLResponse
+		response    *public.GetShortenURLResponse
 		contentType string
 	}
 	tests := []struct {
@@ -41,13 +41,13 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_Success(t *testing.T)
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
-				body: &endpoints.GetShortenURLRequest{
+				body: &public.GetShortenURLRequest{
 					URL: "https://duckduckgo.com",
 				},
 			},
 			expected: Expected{
 				code: http.StatusCreated,
-				response: &endpoints.GetShortenURLResponse{
+				response: &public.GetShortenURLResponse{
 					Result: "http://localhost:8080/c489a87f9b3b",
 				},
 				contentType: "application/json",
@@ -88,7 +88,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_Success(t *testing.T)
 			if result.StatusCode == http.StatusCreated {
 				resBody, err := io.ReadAll(result.Body)
 				require.NoError(t, err, "error reading response body")
-				res := &endpoints.GetShortenURLResponse{}
+				res := &public.GetShortenURLResponse{}
 				_ = json.Unmarshal(resBody, res)
 				assert.Equal(t, test.expected.response, res, "unexpected response body")
 			}
@@ -105,7 +105,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_ConflictError(t *test
 
 	type Expected struct {
 		code        int
-		response    *endpoints.GetShortenURLResponse
+		response    *public.GetShortenURLResponse
 		contentType string
 	}
 	tests := []struct {
@@ -118,13 +118,13 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_ConflictError(t *test
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
-				body: &endpoints.GetShortenURLRequest{
+				body: &public.GetShortenURLRequest{
 					URL: "https://duckduckgo.com",
 				},
 			},
 			expected: Expected{
 				code: http.StatusConflict,
-				response: &endpoints.GetShortenURLResponse{
+				response: &public.GetShortenURLResponse{
 					Result: "http://localhost:8080/c489a87f9b3b",
 				},
 				contentType: "application/json",
@@ -164,7 +164,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_ConflictError(t *test
 
 			resBody, err := io.ReadAll(result.Body)
 			require.NoError(t, err, "error reading response body")
-			res := &endpoints.GetShortenURLResponse{}
+			res := &public.GetShortenURLResponse{}
 			_ = json.Unmarshal(resBody, res)
 			assert.Equal(t, test.expected.response, res, "unexpected response body")
 		})
@@ -180,7 +180,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_BadRequestError(t *te
 
 	type Expected struct {
 		code        int
-		response    *endpoints.GetShortenURLResponse
+		response    *public.GetShortenURLResponse
 		contentType string
 	}
 	tests := []struct {
@@ -193,7 +193,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_BadRequestError(t *te
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
-				body: &endpoints.GetShortenURLRequest{
+				body: &public.GetShortenURLRequest{
 					URL: "",
 				},
 			},
@@ -233,7 +233,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_CreateUrlError(t *tes
 
 	type Expected struct {
 		code        int
-		response    *endpoints.GetShortenURLResponse
+		response    *public.GetShortenURLResponse
 		contentType string
 	}
 	tests := []struct {
@@ -246,7 +246,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_CreateUrlError(t *tes
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
-				body: &endpoints.GetShortenURLRequest{
+				body: &public.GetShortenURLRequest{
 					URL: "https://duckduckgo.com",
 				},
 			},
@@ -293,7 +293,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_UnmarshallError(t *te
 
 	type Expected struct {
 		code        int
-		response    *endpoints.GetShortenURLResponse
+		response    *public.GetShortenURLResponse
 		contentType string
 	}
 	tests := []struct {
@@ -306,7 +306,7 @@ func (suite *EndpointsTestSuite) Test_GetShortenURLHandler_UnmarshallError(t *te
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten",
-				body: &endpoints.GetShortenURLRequest{
+				body: &public.GetShortenURLRequest{
 					URL: "https://duckduckgo.com",
 				},
 			},

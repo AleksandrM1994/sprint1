@@ -12,14 +12,14 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 )
 
 func (suite *EndpointsTestSuite) Test_CreateUserHandler_Success(t *testing.T) {
 	type Request struct {
 		method string
 		url    string
-		body   *endpoints.CreateUserRequest
+		body   *public.CreateUserRequest
 	}
 
 	type Expected struct {
@@ -36,7 +36,7 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler_Success(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/user/create",
-				body: &endpoints.CreateUserRequest{
+				body: &public.CreateUserRequest{
 					Login: "amakarkin",
 				},
 			},
@@ -77,7 +77,7 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler_CreateUserError(t *testi
 	type Request struct {
 		method string
 		url    string
-		body   *endpoints.CreateUserRequest
+		body   *public.CreateUserRequest
 	}
 
 	type Expected struct {
@@ -94,7 +94,7 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler_CreateUserError(t *testi
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/user/create",
-				body: &endpoints.CreateUserRequest{
+				body: &public.CreateUserRequest{
 					Login: "amakarkin",
 				},
 			},
@@ -134,7 +134,7 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler_BadRequestError(t *testi
 	type Request struct {
 		method string
 		url    string
-		body   *endpoints.CreateUserRequest
+		body   *public.CreateUserRequest
 	}
 
 	type Expected struct {
@@ -151,7 +151,7 @@ func (suite *EndpointsTestSuite) Test_CreateUserHandler_BadRequestError(t *testi
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/user/create",
-				body: &endpoints.CreateUserRequest{
+				body: &public.CreateUserRequest{
 					Login: "",
 				},
 			},

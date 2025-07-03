@@ -1,4 +1,4 @@
-package endpoints
+package public
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
-	"github.com/sprint1/internal/app/shortener/endpoints/middleware"
+	"github.com/sprint1/internal/app/shortener/endpoints/public/middleware"
 	"github.com/sprint1/internal/app/shortener/service"
 )
 

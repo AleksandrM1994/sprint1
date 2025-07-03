@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 
+	"github.com/sprint1/config"
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 	"github.com/sprint1/internal/app/shortener/service"
 )
@@ -22,7 +23,7 @@ const (
 )
 
 // Authenticate функция, отвечающая за авторизацию запросов
-func Authenticate(lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
+func Authenticate(cfg config.Config, lg *zap.SugaredLogger, s *service.ServiceImpl, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
