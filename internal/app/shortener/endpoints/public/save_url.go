@@ -1,4 +1,4 @@
-package endpoints
+package public
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sprint1/internal/app/shortener/endpoints/middleware"
+	"github.com/sprint1/internal/app/shortener/endpoints/public/middleware"
 	custom_errs "github.com/sprint1/internal/app/shortener/errors"
 )
 

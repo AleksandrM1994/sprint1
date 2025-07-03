@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+option go_package = "internal/grpc";
+
+package shortener;
+
+service Shortener {
+  rpc DeleteUserURLs (DeleteUserURLsRequest) returns (DeleteUserURLsResponse);
+  rpc GetOriginalURL (GetOriginalURLRequest) returns (GetOriginalURLResponse);
+  rpc GetShortenURL (GetShortenURLRequest) returns (GetShortenURLResponse);
+  rpc GetStatistics (GetStatisticsRequest) returns (GetStatisticsResponse);
+  rpc GetUserURLs (GetUserURLsRequest) returns (GetUserURLsResponse);
+  rpc Ping (PingRequest) returns (PingResponse);
+  rpc SaveURL (SaveURLRequest) returns (SaveURLResponse);
+  rpc SaveURLsBatch (SaveURLsBatchRequest) returns (SaveURLsBatchResponse);
+}
+
+message DeleteUserURLsRequest {
+  repeated string urls = 1;
+}
+message DeleteUserURLsResponse {
+  string error_message = 1;
+}
+
+message GetOriginalURLRequest {
+  string short_id = 1;
+}
+message GetOriginalURLResponse {
+  string original_url = 1;
+  string error_message = 2;
+}
+
+message GetShortenURLRequest {
+  string original_url = 1;
+}
+message GetShortenURLResponse {
+  string short_url = 1;
+  string error_message = 2;
+}
+
+message GetStatisticsRequest {
+  string client_ip = 1;
+}
+
+message GetStatisticsResponse {
+  int64 users_count = 1;
+  int64 urls_count = 2;
+  string error_message = 3;
+}
+
+message GetUserURLsRequest {
+}
+
+message GetUserURLsResponse {
+  string short_url = 1;
+  string original_url = 2;
+  string error_message = 3;
+}
+
+message PingRequest {}
+
+message PingResponse {
+  string error_message = 1;
+}
+
+message SaveURLRequest{
+
+}
+
+message SaveURLResponse{
+  string short_url = 1;
+  string error_message = 2;
+}
+
+message SaveURLsBatchRequest {
+  string correlation_id = 1;
+  string original_url = 2;
+}
+
+message SaveURLsBatchResponse {
+  string correlation_id = 1;
+  string short_url = 2;
+}

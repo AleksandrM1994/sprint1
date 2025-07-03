@@ -8,14 +8,14 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 	"github.com/sprint1/internal/app/shortener/mocks"
 	"github.com/sprint1/internal/app/shortener/service"
 	"github.com/sprint1/internal/app/shortener/workers"
 )
 
 type EndpointsTestSuite struct {
-	controller *endpoints.Controller
+	controller *public.Controller
 	repo       *mocks.MockRepoDB
 }
 
@@ -35,7 +35,7 @@ func TestEndpointSuite(t *testing.T) {
 	workerPool := workers.NewWorkerPool(lg, repo)
 	workerPool.Start()
 	serviceImpl := service.NewService(lg, cfg, repo, workerPool)
-	controller := endpoints.NewController(router, serviceImpl, cfg, lg)
+	controller := public.NewController(router, serviceImpl, cfg, lg)
 	suite := &EndpointsTestSuite{controller: controller, repo: repo}
 
 	suite.Test_GetOriginalUrlHandler_Success(t)

@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
@@ -22,12 +22,12 @@ func (suite *EndpointsTestSuite) Test_SaveUrlsBatchHandler(t *testing.T) {
 	type Request struct {
 		method string
 		url    string
-		body   []*endpoints.URLInBatch
+		body   []*public.URLInBatch
 	}
 
 	type Expected struct {
 		code        int
-		response    []*endpoints.URLInBatch
+		response    []*public.URLInBatch
 		contentType string
 	}
 	tests := []struct {
@@ -40,7 +40,7 @@ func (suite *EndpointsTestSuite) Test_SaveUrlsBatchHandler(t *testing.T) {
 			request: Request{
 				method: http.MethodPost,
 				url:    "http://localhost:8080/api/shorten/batch",
-				body: []*endpoints.URLInBatch{
+				body: []*public.URLInBatch{
 					{
 						CorrelationID: "qwe123",
 						OriginalURL:   "https://go.dev",
@@ -57,7 +57,7 @@ func (suite *EndpointsTestSuite) Test_SaveUrlsBatchHandler(t *testing.T) {
 			},
 			expected: Expected{
 				code: http.StatusCreated,
-				response: []*endpoints.URLInBatch{
+				response: []*public.URLInBatch{
 					{
 						CorrelationID: "qwe123",
 						ShortURL:      "http://localhost:8080/6e7f58f6b868",
@@ -132,7 +132,7 @@ func (suite *EndpointsTestSuite) Test_SaveUrlsBatchHandler(t *testing.T) {
 			if result.StatusCode == http.StatusCreated {
 				resBody, err := io.ReadAll(result.Body)
 				require.NoError(t, err, "error reading response body")
-				var res []*endpoints.URLInBatch
+				var res []*public.URLInBatch
 				_ = json.Unmarshal(resBody, &res)
 				assert.Equal(t, test.expected.response, res, "unexpected response body")
 			}

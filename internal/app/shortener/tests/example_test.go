@@ -11,13 +11,13 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	"github.com/sprint1/internal/app/shortener/endpoints"
+	"github.com/sprint1/internal/app/shortener/endpoints/public"
 	"github.com/sprint1/internal/app/shortener/repository"
 )
 
 // Example_CreateUserHandler показывает, как использовать CreateUserHandler для создания пользователя.
 func (suite *EndpointsTestSuite) Example_CreateUserHandler() {
-	body := &endpoints.CreateUserRequest{
+	body := &public.CreateUserRequest{
 		Login: "amakarkin",
 	}
 	bodyBytes, err := json.Marshal(body)
@@ -49,7 +49,7 @@ func (suite *EndpointsTestSuite) Example_CreateUserHandler() {
 		fmt.Printf("Expected status code %d, got %d", http.StatusCreated, result.StatusCode)
 	}
 
-	var response endpoints.CreateUserResponse
+	var response public.CreateUserResponse
 	if err := json.NewDecoder(result.Body).Decode(&response); err != nil {
 		fmt.Printf("Failed to decode response body: %v", err)
 	}
@@ -60,7 +60,7 @@ func (suite *EndpointsTestSuite) Example_CreateUserHandler() {
 // Example_AuthUserHandler показывает, как использовать AuthUserHandler для аутентификации пользователя.
 func (suite *EndpointsTestSuite) Example_AuthUserHandler() {
 	// Создаем тестовый запрос
-	authRequest := &endpoints.AuthUserRequest{
+	authRequest := &public.AuthUserRequest{
 		Login:    "test",
 		Password: "test",
 	}
@@ -127,7 +127,7 @@ func (suite *EndpointsTestSuite) ExampleGetOriginalUrlHandler() {
 // ExampleGetShortenURLHandler показывает, как использовать GetShortenURLHandler для получения сокращенного URL.
 func (suite *EndpointsTestSuite) ExampleGetShortenURLHandler() {
 	// Создаем тестовый запрос
-	requestBody := &endpoints.GetShortenURLRequest{
+	requestBody := &public.GetShortenURLRequest{
 		URL: "https://duckduckgo.com",
 	}
 	body, _ := json.Marshal(requestBody)
@@ -166,12 +166,12 @@ func (suite *EndpointsTestSuite) ExampleGetShortenURLHandler() {
 	}
 
 	// Проверяем ответ
-	response := &endpoints.GetShortenURLResponse{}
+	response := &public.GetShortenURLResponse{}
 	if err := json.Unmarshal(resBody, response); err != nil {
 		fmt.Println("error unmarshalling response")
 	}
 
-	expectedResponse := &endpoints.GetShortenURLResponse{
+	expectedResponse := &public.GetShortenURLResponse{
 		Result: "http://localhost:8080/c489a87f9b3b",
 	}
 	if response.Result != expectedResponse.Result {

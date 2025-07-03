@@ -1,4 +1,4 @@
-package endpoints
+package public
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/sprint1/config"
-	"github.com/sprint1/internal/app/shortener/endpoints/middleware"
+	middleware2 "github.com/sprint1/internal/app/shortener/endpoints/public/middleware"
 	"github.com/sprint1/internal/app/shortener/service"
 
 	"github.com/gorilla/mux"
@@ -39,9 +39,9 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.GzipMiddleware,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.GzipMiddleware,
+			middleware2.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
@@ -51,7 +51,7 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
+			middleware2.Logging,
 		),
 	).Methods("GET")
 	c.router.Handle("/{id}",
@@ -60,7 +60,7 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
+			middleware2.Logging,
 		),
 	).Methods("GET")
 	c.router.Handle(
@@ -70,8 +70,8 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.GzipMiddleware,
+			middleware2.Logging,
+			middleware2.GzipMiddleware,
 		),
 	).Methods("POST")
 	c.router.Handle(
@@ -81,8 +81,8 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
@@ -92,7 +92,7 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
+			middleware2.Logging,
 		),
 	).Methods("POST")
 	c.router.Handle(
@@ -102,8 +102,8 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("POST")
 	c.router.Handle(
@@ -113,8 +113,8 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("GET")
 	c.router.Handle(
@@ -124,8 +124,8 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Authenticate,
+			middleware2.Logging,
+			middleware2.Authenticate,
 		),
 	).Methods("DELETE")
 	c.router.Handle(
@@ -135,8 +135,8 @@ func (c *Controller) InitHandlers() {
 			c.cfg,
 			c.lg,
 			c.service,
-			middleware.Logging,
-			middleware.Resolver,
+			middleware2.Logging,
+			middleware2.Resolver,
 		),
 	).Methods("GET")
 }
